@@ -1,0 +1,898 @@
+{% extends 'header.html' %}
+{% load humanize %}
+{% block content %}
+
+ <div class="content-wrapper">
+    <section class="content">
+
+         <!-- SEARCH BAR -->
+         <div class="container-fluid">
+            <div class="searcheader">SEARCH FOR PRODUCTS</div>
+            <div class="alert alert-danger storereq"></div>
+             <br/>
+            <div class="row search">
+                <form role="form" class="searchform" method="POST" >
+                    {% csrf_token %}
+                  <div class="col-sm-3 fashion">
+                      <div class="form-group">
+                          <select class="form-control" name="sub_department" id="sub_dept" placeholder="SUB DEPARTMENT" value="{{ form.sub_department.value }}">
+                                <option>SUB DEPARTMENT</option>
+                                {% for each in subdeptpromo %}
+                                    <option value="{{each.SubDeptName}}">{{each.SubDeptName}}</option>
+                                {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+
+                  <div class="col-sm-3 fashion">
+                         <div class="form-group">
+                              <select class="form-control" name="category" id="category" placeholder="CATEGORY" value="{{ form.category.value }}" >
+                                <option>CATEGORY</option>
+                                {% for each in categorynamepromo %}
+                                    <option value="{{each.CategoryName}}" >{{each.CategoryName}}</option>
+                                {% endfor %}
+                              </select>
+                        </div>
+                  </div>
+
+
+                  <div class="col-sm-3 fashion">
+                    <input list="" data-list="namelist" id="promoname" type="text" class="form-control productnamelist inp" name="product_name" placeholder="PRODUCT NAME" value="{{form.product_name.value|default_if_none:''}}" autocomplete="off">
+                    <datalist id="namelist">
+                      {% for each in productnamepromo %}
+                        <option value="{{each.Name}}">{{each.Name}}</option>
+                      {% endfor %}
+                    </datalist>
+                  </div>
+
+                  <div class="col-sm-2 fashion">
+                     <input list="" data-list="upclist" id="promoupc" type="number" class="form-control upclist inp" name="upc" placeholder="UPC" value="{{form.upc.value|default_if_none:''}}" autocomplete="off">
+                     <datalist id="upclist">
+                         {% for each in upcnumberpromo %}
+                            <option value="{{each.UPC}}">{{each.UPC}}</option>
+                         {% endfor %}
+                     </datalist>
+                  </div>
+
+
+                  <div class="col-sm-2 fashion">
+                      <div class="form-group">
+                              <select class="form-control" name="store_id" id="store_id"  placeholder="STORE ID" value="{{ form.store_id.value }}" required>
+                                  <option value="STORE ID">STORE ID</option>
+                                  {% for each in storepromo %}
+                                     <option value="{{each.StoreId}}" >{{each.StoreId}}</option>
+                                  {% endfor %}
+                              </select>
+                        </div>
+                  </div>
+
+
+                  <div class="col-sm-2 fashion">
+                      <div class="form-group">
+                              <select class="form-control"  name="promotype" id="promotype" placeholder="PROMOTION TYPE" value="{{ form.promotype.value }}">
+                                <option>PROMOTION TYPE</option>
+                                {% for each in promotypedip %}
+                                    <option value="{{each.PromotionType}}" >{{each.PromotionType}}</option>
+                                {% endfor %}
+                              </select>
+                        </div>
+                  </div>
+
+
+                  <!--<div class="col-sm-2 fashion">-->
+                      <!--<div class="form-group">-->
+                              <!--<select class="form-control" name="promotionname" id="promotionname" placeholder="PROMOTION NAME" value="{{ form.promotionname.value }}">-->
+                                <!--<option>PROMOTION NAME</option>-->
+                                <!--{% for each in promotionnamedip %}-->
+                                    <!--<option value="{{each.PromotionName}}" >{{each.PromotionName}}</option>-->
+                                <!--{% endfor %}-->
+                              <!--</select>-->
+                        <!--</div>-->
+                  <!--</div>-->
+
+
+                  <div class="col-sm-2 fashion">
+                      <div class="form-group">
+                          <input type="text" id="startdate" class="form-control" placeholder="START DATE" name="startdate" value="{{ form.startdate.value|default_if_none:''}}" autocomplete="off" required/>
+                      </div>
+                  </div>
+
+
+                  <div class="col-sm-2 fashion">
+                      <div class="form-group">
+                          <input type="text" id="enddate" class="form-control" placeholder="END DATE" name="enddate" value="{{ form.enddate.value|default_if_none:''}}" autocomplete="off" required/>
+                      </div>
+                  </div>
+
+
+                  <div class="col-sm-1 fashion">
+                      <input type="hidden" id="form_nb1_new_price" name="nb1_newprice" >
+                      <button type="button" class="btn btn-default" id="detailsseachbtn">SEARCH </button>
+                  </div>
+                </form>
+
+            </div> <!--END OF SEARCH-->
+
+
+
+            <div class="row promobox">
+                <!--<ul>-->
+                    <!--<li> <div class="col-sm-2 bottom">Actual Sale Without Promotion</div> </li>-->
+                    <!--<li> <div class="col-sm-2 bottom">Actual Sale With Promotion</div> </li>-->
+                    <!--<li> <div class="col-sm-2 bottom">Growth / Lift</div> </li>-->
+                    <!--<li> <div class="col-sm-3 bottom">Best In Class Location</div> </li>-->
+                    <!--<li> <div class="col-sm-3 bottom">Best In Class Type</div> </li>-->
+                <!--</ul>-->
+                    <div class="selectpro"></div>
+
+                    <div class="col-sm-12 promoinsight">
+                    <div class="col-sm-2">
+                       <div class="panel panel-default optimizedline">
+                            <div class="panel-heading promoheading">Baseline Sales without Promotion</div>
+                            <div class="panel-body body_height">
+                               <div name="highlight">${{highlights.acvwopromo|floatformat:"0"|intcomma}}</div> <!--Line graph-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                       <div class="panel panel-default optimizedline">
+                            <div class="panel-heading promoheading">Actual Sales with Promotion</div>
+                            <div class="panel-body body_height">
+                               <div name="highlight">${{highlights.acvwpromo|floatformat:"0"|intcomma}}</div> <!--Line graph-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                       <div class="panel panel-default optimizedline">
+                            <div class="panel-heading promoheading">Sales Lift</div>
+                            <div class="panel-body body_height">
+                               <div name="highlight">{{highlights.saleslift}}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                       <div class="panel panel-default optimizedline">
+                            <div class="panel-heading promoheading">Promotion Spend</div>
+                            <div class="panel-body body_height">
+                               <div name="highlight">${{highlights.promospend|floatformat:"0"|intcomma}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-3 ">
+                       <div class="panel panel-default optimizedline">
+                            <div class="panel-heading promoheading">Best In Class Promotion</div>
+                            <div class="panel-body body_height">
+                               <div name="highlight">{{highlights.BICTy}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-12 promograph">
+                       <div class="panel panel-default optimizedline">
+                            <div class="panel-heading">Current Promotion Performance</div>
+                            <div class="panel-body">
+                               <div id="container1"></div> <!--Line graph-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    {% if product_info.NB1_ProductId != 0 and product_info.NB1_ProductId != None %}
+                    <div class="col-sm-12 promograph">
+                        <div class="nb_price_change">
+                            <div class="nb_seg" ><i class="fas fa-caret-right nb_icon"></i><span class="nb_width">Increase/Decrease national brand price by percent </span>
+                                <div class="form-group newpriceform">
+                                    <input type="number" step="0.01" id="nb1_new_price" class="form-control nb1_newprice" placeholder="20" required>
+                                </div>
+                                <button type="button" class="btn btn-default nb_newprice_submit hide">Submit</button>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-info summary_btn">Summary</button>
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="col-sm-12 promograph">
+                        <div class="panel panel-default summary_pop">
+                            <div class="panel-heading summary-title">
+                                <button type="button" class="close first_close" data-dismiss="modal">&times;</button>
+                                <h4 class="panel-title">Summary</h4>
+                            </div>
+                            <div class="panel-body summary_text">
+                                <p></p>
+                            </div>
+                        </div>
+
+                       <div class="panel panel-default optizedpie">
+                            <div class="panel-footer">Promotion Forecast Performance</div>
+                            <div class="panel-body">
+                              <!-- Optized Pie Chart -->
+                                <div id="container2" class="optimizedpie"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--<div class="col-sm-6">-->
+                       <!--<div class="panel panel-default optimizedline">-->
+                            <!--<div class="panel-heading">Location Perform</div>-->
+                            <!--<div class="panel-body">-->
+                               <!--<div id="container3"></div> &lt;!&ndash;Line graph&ndash;&gt;-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<div class="col-sm-6">-->
+                       <!--<div class="panel panel-default optizedpie">-->
+                            <!--<div class="panel-footer">SubDept Perform</div>-->
+                            <!--<div class="panel-body">-->
+                              <!--&lt;!&ndash; Optized Pie Chart &ndash;&gt;-->
+                                <!--<div id="container4" class="optimizedpie"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!-- | row -->
+            </div>	<!--END OF CONTAINER FLUID-->
+         </div><!--END OF SEARCH BAR-->
+    </section>
+ </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+
+    <!-- Js File Included Hear -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/app.min.js"></script>
+	<!-- PIE CHART -->
+    <!--<script src="https://code.highcharts.com/highcharts.js"></script>-->
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+	<!--<script src="/static/js/highcharts.js"></script>-->
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <!--<script src="https://code.highcharts.com/modules/exporting.js"></script>-->
+    <script src="/static/js/main.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        var storeid= $('#store_id').attr('value');
+        if (storeid=='None') {
+          var storeid ='{{ store.first.StoreId|default:'STORE ID'}}'
+        }
+        $("#store_id").val(storeid).find("option [value='" + storeid + "']").attr('selected', true);
+    });
+
+    $(document).ready(function(){
+        var categoryname= $('#category').attr('value');
+        if (categoryname=='None') {
+          var categoryname ='CATEGORY'
+        }
+        $("#category").val(categoryname).find("option [value='" + categoryname + "']").attr('selected', true);
+    });
+
+    $(document).ready(function(){
+        var subdept= $('#sub_dept').attr('value');
+        if (subdept=='None') {
+          var subdept ='SUB DEPARTMENT'
+        }
+        $("#sub_dept").val(subdept).find("option [value='" + subdept + "']").attr('selected', true);
+    });
+
+
+    $(document).ready(function(){
+        var ptype= $('#promotype').attr('value');
+        if (ptype=='None') {
+          var ptype ='PROMOTION TYPE'
+        }
+        $("#promotype").val(ptype).find("option [value='" + ptype + "']").attr('selected', true);
+    });
+
+
+
+
+    $(document).ready(function(){
+        if(Object.keys({{highlights|safe}}).length ==0 ){
+            $("[name='highlight']").html("-");
+        }
+    });
+
+
+
+ var labels;
+ var plotBands = [{% for k in promo_period %}{
+            from: Date.parse('{{k.StartDate}}'),
+            to: Date.parse('{{k.EndDate}}'),
+            color: Highcharts.Color(Highcharts.getOptions().colors[{{forloop.counter}}]).setOpacity(0.5).get(),
+            id: "{{forloop.counter}}-{{k.PromotionType}}-{{k.PromotionName}}"
+        }{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+ var Bands = JSON.parse(JSON.stringify(plotBands))
+
+ var options = Highcharts.chart('container1', {
+    chart: {
+    },
+    xAxis: {
+        type: 'datetime',
+        minTickInterval: 36e5 * 24,
+        labels: {
+            align: 'center',
+            format: '{value:%e.%b%y}'
+        },
+        plotBands: plotBands
+    },
+    title: {
+        text: ''
+    },
+
+    credits:{
+        enabled: false
+    },
+    tooltip: {
+        style: {
+            width: '250px'
+        }
+    },
+    yAxis: [{
+        allowDecimals: false,
+        labels: {
+            enabled: true
+        },
+        title: {
+            text: ''
+        },
+        gridLineColor: 'rgba(0, 0, 0, 0.07)',
+        gridLineWidth: 0
+    }],
+    plotOptions: {
+        series: {
+            threshold: null,
+            marker: {
+                enabled: false,
+                symbol: 'circle',
+                radius: 2
+            },
+            fillOpacity: 0.5
+        },
+        area: {
+            events: {
+                legendItemClick: function (e) {
+   					for (var i =0; i< Bands.length; i++ ) {
+                		console.log(Bands[i].id, this.name)
+                		if(this.name == Bands[i].id) {
+                            if(this.visible == true){
+                                hideBand(this.chart,i,this.name);
+                                break;
+                            }
+                            else {
+                                showBand(this.chart,i,this.name);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Sales Quantity',
+        id: 'Quantity',
+        type: 'area',
+        data: [{% for k,v in sd %}{x: Date.parse('{{k}}'), y: {{v}}[0], name: {{v}}[1]}{% if not forloop.last %}, {% endif %}{% endfor %}],
+        tooltip: {
+            headerFormat: '{point.x:%d %B %Y}<br>',
+            pointFormat: 'Price: ${point.name}<br>Quantity Sold: {point.y}',
+            valueSuffix: ' units'
+        }
+        },{
+        name: 'Baseline Sales Quantity',
+        id: 'Base Quantity',
+        type: 'line',
+        data: [{% for k,v in bs %}{x: Date.parse('{{k}}'), y: {{v}}[0]}{% if not forloop.last %}, {% endif %}{% endfor %}],
+        tooltip: {
+            headerFormat: '{point.x:%d %B %Y}<br>',
+            pointFormat: 'Baseline Quantity: {point.y}',
+            valueSuffix: ' units'
+        }
+        }{% if promo_period %}{% for k in promo_period %},{
+            type: 'area',
+            name: "{{forloop.counter}}-{{k.PromotionType}}-{{k.PromotionName}}",
+            color: Highcharts.Color(Highcharts.getOptions().colors[{{forloop.counter}}]).setOpacity(0.5).get()
+        }{% endfor %}{% endif %}
+        {% if avgplotband %},{
+            type: 'flags',
+            name: "average",
+            color: '#333333',
+            shape: 'squarepin',
+            y: -90,
+            data:[{% for i in avgplotband %}{ x: Date.parse('{{i.EndDate}}'), title: 'Avg Sales: {{i.salesqty}} units <br/> Avg Revenue: ${{i.revenue}} <br/> Sales Lift: {{i.saleslift}}% <br/> Starts: {{i.StartDate}} <br/> Ends: {{i.EndDate}}'}{% if not forloop.last %},{% endif %}{% endfor %}],
+            showInLegend: false
+            }{% endif %}]
+}, function(chart) { // on complete
+    var promotype_drp = $("#promotype").attr('value');
+    console.log(promotype_drp)
+    <!--var promoname_drp = $("#promotionname").val();-->
+    console.log(({{productids|safe}}).length < 1 ||({{sd|safe}}).length < 1)
+    console.log(promotype_drp != "None")
+     if (Object.keys({{productids|safe}}).length < 1 ||Object.keys({{sd|safe}}).length < 2) {
+        labels = chart.renderer.text('No Data Available', 400, 200).css({
+            color: '#4572A7',
+            fontSize: '16px'
+          })
+          .add();
+          console.log('first')
+          chart.series[1].remove(true);
+          chart.series[0].remove(true);
+     }
+     else if(({{promo_period|safe}}).length ==0 && (promotype_drp !="PROMOTION TYPE")){
+        labels = chart.renderer.text('Promotion Not Available', 400, 50).css({
+            color: '#4572A7',
+            fontSize: '16px'
+          })
+          .add();
+          console.log('second')
+          <!--chart.series[1].remove(true);-->
+          <!--chart.series[0].remove(true);-->
+     }
+     else {
+     }
+     });
+
+     function hideBand(chart,i,id){
+	    console.log('hide', chart,i,id)
+        console.log(chart.xAxis[0].plotLinesAndBands, plotBands,Bands)
+        chart.xAxis[0].removePlotBand(id);
+        console.log(chart.xAxis[0].plotLinesAndBands, plotBands,Bands)
+    }
+
+    function showBand(chart,i,id){
+		console.log('show', chart,i,id)
+        chart.xAxis[0].addPlotBand(Bands[i]);
+    }
+
+    var labels;
+    var chart = Highcharts.chart('container2',{
+        chart: {
+        },
+        title: {
+            text: ''
+        },
+
+        xAxis: {
+            type: 'datetime',
+             labels: {
+               format: '{value:%e-%b}'
+             },
+        },
+
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
+
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            xDateFormat: '%d %B %Y',
+            valueSuffix: ' units'
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        legend: {
+        },
+
+        series: [{% for k,v in forecast_qty.items %}{
+            name: '{{k}}',
+            data: [{% for m,n in v.items %}[Date.parse('{{m}}'),{{n}}]{% if not forloop.last %},{% endif %}{% endfor %}],
+            zIndex: 1,
+            marker: {
+                fillColor: 'white',
+                lineWidth: 2,
+                lineColor: Highcharts.getOptions().colors[{{forloop.counter0}}]
+            }
+        }, {
+            name: 'Range',
+            data: [{% for m,n in v.items %}[Date.parse('{{m}}'),Math.round({{n}}-{{n}}*0.1),Math.round({{n}}+{{n}}*0.1)]{% if not forloop.last %},{% endif %}{% endfor %}],
+            type: 'arearange',
+            lineWidth: 0,
+            linkedTo: ':previous',
+            color: Highcharts.getOptions().colors[{{forloop.counter0}}],
+            fillOpacity: 0.3,
+            zIndex: 0,
+            marker: {
+                enabled: false
+            }
+        }{% if not forloop.last %},{% endif %}{% endfor %}]
+
+    }, function(chart) { // on complete
+        <!--console.log(Object.keys({{forecast_qty|safe}}).length)-->
+        if (Object.keys({{forecast_qty|safe}}).length < 1) {
+            labels = chart.renderer.text('No Data Available', 400, 200).css({
+                color: '#4572A7',
+                fontSize: '16px'
+              })
+              .add();
+              <!--console.log('here->'+{{cur_qty}}.length);-->
+       }
+  });
+
+        $(window).on('load',function(){
+            getCategoryDataBySubDept();
+            getProductNameDataCategoryName();
+        });
+
+
+    $("#sub_dept").on('change',function () {
+        $('#category').empty();
+        $('#category').append($('<option>').text('Loading...').attr('value', ''));
+        <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+        var subname = $('#sub_dept').val();  // get the selected country ID from the HTML input
+        var response_data = '';
+        if (subname == 'SUB DEPARTMENT'){
+            subname = '';
+            console.log(subname)
+            }
+        $.ajax({                       // initialize an AJAX request
+            url: '/categorydisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+            data: {
+              'SubDeptName': subname       // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_cities` view function
+              response_data = data;
+            }
+        }).done(function(){
+              $('#category').empty();
+              $('#category').append($('<option>').text('CATEGORY').attr('value', 'CATEGORY'));
+              $.each(response_data.categoryname, function(i, value) {
+                  $('#category').append($('<option>').text(value).attr('value', value));
+          });
+      });
+    });
+
+    function getCategoryDataBySubDept(){
+        var old_val = $('#category option:selected').val();
+        $('#category').empty();
+        $('#category').append($('<option>').text('Loading...').attr('value', ''));
+        <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+        var subname = $('#sub_dept').val();  // get the selected country ID from the HTML input
+        var response_data = '';
+        if (subname == 'SUB DEPARTMENT'){
+            subname = '';
+            console.log(subname)
+            }
+        $.ajax({                       // initialize an AJAX request
+            url: '/categorydisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+            data: {
+              'SubDeptName': subname       // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_cities` view function
+              response_data = data;
+
+            }
+        }).done(function(){
+            $('#category').empty();
+            $('#category').append($('<option>').text('CATEGORY').attr('value', 'CATEGORY'));
+            $.each(response_data.categoryname, function(i, value) {
+                if(value == old_val){
+                    $('#category').append($('<option>').text(value).attr({'value':value,'selected':'selected'}));
+                }else{
+                    $('#category').append($('<option>').text(value).attr('value',value));
+                }
+          });
+        });
+    }
+
+		$("#category").on('change',function () {
+			$('#namelist').empty();
+			<!--$('#namelist').append($('<option>').text('Loading...').attr('value', ''));-->
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var catname = $('#category').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (catname == 'CATEGORY'){
+			catname = '';
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/productnamedisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'CategoryName': catname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+			}
+		  }).done(function(){
+		  		$('#namelist').empty();
+			  $('#namelist').append($('<option>').text('').attr('value', ''));
+			  $.each(response_data.productnamedisplay, function(i, value) {
+            	  $('#namelist').append($('<option>').text(value).attr('value', value));
+        	  });
+		  });
+		});
+
+		function getProductNameDataCategoryName(){
+			var old_val = $('.productnamelist').attr('value');
+			console.log($('.productnamelist').attr('value'));
+			$('#namelist').empty();
+		  var catname = $('#category').attr('value');  // get the selected country ID from the HTML input
+		  console.log(catname);
+		  var response_data = '';
+		  if (catname == 'CATEGORY' || catname == 'None'){
+			catname = '';
+			}
+			console.log($('#category').attr('value'))
+		  $.ajax({                       // initialize an AJAX request
+			url: '/productnamedisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'CategoryName': catname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+
+			}
+		  }).done(function(){
+		  		$('#namelist').empty();
+			  $.each(response_data.productnamedisplay, function(i, value) {
+			  		if(value == old_val){
+            	  		$('#namelist').append($('<option>').text(value).attr({'value':value,'selected':'selected'}));
+            	  	}else{
+            	  		$('#namelist').append($('<option>').text(value).attr('value',value));
+            	  	}
+        	  });
+        	  if (catname != 'CATEGORY' && catname != ''){
+        	     $('.inp').attr('list','namelist');
+        	  }
+		});
+		}
+
+    	var inpKey = '';
+		var categoryname= $('#category').val();
+		$('#category').change(function(){
+			$('.inp').val('');
+			if($(this).val() != 'CATEGORY') {
+				datalist = $('.inp').attr('data-list');
+				$('.inp').attr('list', datalist);
+			} else {
+				$('.inp').attr('list', '');
+			}
+		});
+		$('.inp').keyup(function(e){
+		  if (e.keyCode != undefined && $('#category').val() === 'CATEGORY') {
+			if(inpKey != this.value) {
+			  if(this.value.length >= 3){
+				inpKey = this.value;
+				datalist = $(this).attr('data-list');
+				$(this).attr('list', datalist);
+			  } else {
+				$(this).attr('list', '');
+			  }
+			} else {
+			  $(this).attr('list', '');
+			}
+		  }
+		});
+
+
+        $(document).ready(function() {
+            Date.prototype.addMonths = function (m) {
+                var d = new Date(this);
+                var years = Math.floor(m / 12);
+                var months = m - (years * 12);
+                if (years) d.setFullYear(d.getFullYear() + years);
+                if (months) d.setMonth(d.getMonth() + months);
+                return d;
+            }
+          $("#startdate").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "dd-M-yy",
+            maxDate: 0,
+            showMonthAfterYear: true,
+            onSelect: function(selectedDate) {
+              console.log(selectedDate)
+              var dt = $('#startdate').datepicker('getDate');
+              $('#enddate').datepicker('option', 'minDate',new Date(dt).addMonths(1));
+            }
+          });
+          $("#enddate").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "dd-M-yy",
+            showMonthAfterYear: true
+          });
+        });
+
+		$("#detailsseachbtn").click(function(){
+			var storeidpromo= $('#store_id').val();
+            var namereq= $('#promoname').val();
+            console.log(namereq.length)
+            var upcreq= $('#promoupc').val();
+            var catreq= $('#category').val();
+            var startdatereq = $('#startdate').val();
+			var enddatereq = $('#enddate').val();
+			if (namereq.length == 0 && upcreq.length == 0 ) {
+                $(".storereq").html("Please select at least a Product or UPC");
+                $('.storereq').show();
+                console.log(1)
+			}
+			else if (storeidpromo == 'STORE ID') {
+				$('.storereq').html('Please select a Store Id');
+				$('.storereq').show();
+				 console.log(3)
+            }
+            else if (startdatereq== '' && enddatereq== '') {
+                $(".storereq").html("Please select Start Date and End Date");
+                $('.storereq').show();
+            }
+            else {
+                $('.storereq').hide();
+				$('[id*="detailsseachbtn"]').attr('type', 'submit');
+				 console.log(2)
+			}
+
+    	});
+
+
+        $(document).ready(function () {
+            if (Object.keys({{selecteddict|safe}}).length == 0) {
+                $(".selectpro").html("Please select a product ... ")
+            }
+            else {
+                $(".selectpro").html("Showing Results of {% firstof selecteddict.Name selecteddict.UPC_NAME selecteddict.CategoryName  %} for Store Id {{selecteddict.StoreId}}")
+            }
+        });
+
+        $('#nb1_new_price').keyup(function(){
+            if ($('#nb1_new_price').val() != '' ){
+                $('.nb_newprice_submit').removeClass('hide');
+            }
+        });
+
+        $('.nb_newprice_submit').hover(function(){
+            if ($('#nb1_new_price').val() == '' ){
+                $('.nb_newprice_submit').addClass('restrict')
+            }
+            else {
+                $('.nb_newprice_submit').removeClass('restrict')
+            }
+        });
+
+        var flag = 'False';
+
+        $('.nb_newprice_submit').click(function(){
+            if ($('#nb1_new_price').val() != '' ){
+                $('#form_nb1_new_price').val($('#nb1_new_price').val());
+                var percent_change = $('#nb1_new_price').val();
+                var product_price = {{product_info.ProductPrice|default:0|safe}} ;
+                var form = $('#detailsseachbtn').closest("form");
+                series_length = chart.series.length
+                Avg_fc_sales= {}
+                for (i=0; i < series_length ; i++){
+                    if (chart.series[i].name != 'Range'){
+                        Avg_sales = 0
+                        for (k=0; k < chart.series[i].data.length; k++){
+                            Avg_sales += chart.series[i].data[k].y
+                        }
+                        Avg_fc_sales[chart.series[i].name] = Avg_sales/chart.series[i].data.length
+                    }
+                }
+                console.log(Avg_fc_sales);
+                if (flag == 'False'){
+                    Org_Avg_fc_sales = Avg_fc_sales;
+                    flag = 'True';
+                }
+                console.log(Org_Avg_fc_sales);
+                $.ajax({
+                    url: '/promotion/',
+                    data: form.serialize(),
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (data) {
+                        forecast_qty = data.forecast_qty
+                        data_keys = Object.keys(forecast_qty);
+                        for (i=series_length-1; i >= 0; i--){
+                            chart.series[i].remove();
+                        }
+                        for (j=0; j < data_keys.length; j++){
+                            console.log(data_keys[j])
+                            sales_data = []
+                            for (var key in forecast_qty[data_keys[j]]){
+                                if (forecast_qty[data_keys[j]].hasOwnProperty(key)) {
+                                    sales_data.push([Date.parse(key), forecast_qty[data_keys[j]][key]]);
+                                }
+                            }
+                            range_data =[]
+                            for (var key in forecast_qty[data_keys[j]]){
+                                if (forecast_qty[data_keys[j]].hasOwnProperty(key)) {
+                                    var value = forecast_qty[data_keys[j]][key]
+                                    range_data.push([Date.parse(key), Math.round(value - value *0.1), Math.round(value + value *0.1)]);
+                                }
+                            }
+                            data1= {
+                                    name: data_keys[j],
+                                    data: sales_data,
+                                    zIndex: 1,
+                                    marker: {
+                                        fillColor: 'white',
+                                        lineWidth: 2,
+                                        lineColor: Highcharts.getOptions().colors[j]
+                                    }
+                                }
+                            data2 = {
+                                    name: 'Range',
+                                    data: range_data,
+                                    type: 'arearange',
+                                    lineWidth: 0,
+                                    linkedTo: ':previous',
+                                    color: Highcharts.getOptions().colors[j],
+                                    fillOpacity: 0.3,
+                                    zIndex: 0,
+                                    marker: {
+                                        enabled: false
+                                    }
+                                }
+                            chart.addSeries(data1);
+                            chart.addSeries(data2);
+                        }
+                        New_Avg_fc_sales = {}
+                        for (i=0; i < series_length ; i++){
+                            if (chart.series[i].name != 'Range'){
+                                New_Avg_sales = 0
+                                for (k=0; k < chart.series[i].data.length; k++){
+                                    New_Avg_sales += chart.series[i].data[k].y
+                                }
+                                New_Avg_fc_sales[chart.series[i].name] = New_Avg_sales/chart.series[i].data.length
+                            }
+                        }
+                        console.log(New_Avg_fc_sales)
+                        $('.nb_newprice_submit').addClass('hide');
+                        volume_change = (New_Avg_fc_sales['Non-Promotional Sales'] - Org_Avg_fc_sales['Non-Promotional Sales'])/New_Avg_fc_sales['Non-Promotional Sales'];
+                        volume_percent = volume_change * 100;
+                        revenue_change = (New_Avg_fc_sales['Non-Promotional Sales'] * {{product_info.ProductPrice|default:0|safe}} - Org_Avg_fc_sales['Non-Promotional Sales'] * {{product_info.ProductPrice|default:0|safe}})/New_Avg_fc_sales['Non-Promotional Sales'] * {{product_info.ProductPrice|default:0|safe}};
+                        revenue_percent = revenue_change * 100;
+                        if (percent_change > 0){ price_I_D = 'increases'; } else { price_I_D = 'decreases'; }
+                        if (volume_percent > 0){ volume_I_D = 'increases'; } else { volume_I_D = 'decreases'; }
+                        if (revenue_percent > 0){ revenue_I_D = 'increases'; } else { revenue_I_D = 'decreases'; }
+                        nb_sales= data.nb_sales;
+                        nb_volume_change =  (nb_sales['NB1_new_sales'] - nb_sales['NB1_sales'])* 100/ nb_sales['NB1_sales']
+                        console.log(nb_volume_change)
+                        if (nb_volume_change > 0){ lost_gain = 'gain'; } else { lost_gain = 'lost'; }
+                        var content = 'When national brand price ' + price_I_D + ' by ' + percent_change +
+                         '%, the private label volume ' + volume_I_D + ' by ' + volume_percent.toFixed(0)  + '% and revenue ' +
+                         revenue_I_D + ' by ' + revenue_percent.toFixed(0) + '% on an average per week. <br />' +
+                         'This shows that the private label cannibalizes national brand of ' + Math.abs(nb_volume_change.toFixed(0)) +
+                         '% ' + lost_gain + ' volume.';
+                        $('.summary_text p').html(content);
+                        $('.summary_pop').show();
+
+                    }
+                });
+             }
+        });
+
+        $('.summary_btn').click(function(){
+            $('.summary_pop').toggle();
+        });
+
+        $('.first_close').click(function(){
+            $('.summary_pop').hide();
+        });
+
+
+</script>
+
+
+{% endblock %}

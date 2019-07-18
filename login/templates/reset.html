@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" >
+	<style>
+	</style>
+</head>
+{% block content %}
+	<div class="container-fluid header-div"></div>
+	<div class="container h-100">
+	<div class="container mt-5 mb-5">
+		<div class="col-xs-6 mx-auto outline px-5 pb-3 col-md-6 pt-5 pb-5">
+          <form method="post">
+		  {% csrf_token %}
+			  <p style="color: red">{{ form.non_field_errors }}</p>
+		<h2 class="pb-5">Enter new Password</h2>
+		<h6 class="pb-3">New Password:</h6>
+		<input type="password" name="password" placeholder="enter new password" class="mb-3 form-control"><br>
+			  {% if form.password.errors %}
+					  {% for error in form.password.errors %}
+					 	 {{ error }}
+					  {% endfor %}
+			  {% endif %}
+		<h6 class="pb-3">Confirm Password:</h6>
+		<input type="password" name="confirm_password" placeholder="confirm new password" class="mb-3 form-control"><br>
+			  {% if form.confirm_password.errors %}
+					  {% for error in form.confirm_password.errors %}
+					 	 {{ error }}
+					  {% endfor %}
+			  {% endif %}
+		<input type="submit" name="" value="Change my password" class="mb-3 btn text-light ">
+          </form>
+	</div>
+	</div>
+</div>
+{% endblock %}

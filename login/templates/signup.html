@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid background-div">
+	<div class="row">
+	<div class="container-fluid header-div"></div>
+	<div class="container col-12 text-centers mb-5">
+		<div class="row">
+		<div class="col-xs-6 mx-auto outline px-5 pb-3 col-md-6 text-black">
+            <div class="modal-header text-center">
+                <h3 class="modal-title text-center w-100 dark-grey-text font-weight-bold" id="myModalLabel"><strong>Create an Account</strong></h3>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                   <p style="color: red">{{ form.non_field_errors }}</p>
+                {% for field in form %}
+                <div class="container-fluid  pb-3">
+                    <div class="row">
+                        <label class="col-6 col-sm-5 reg-label" data-error="wrong" data-success="right" for="Form-email1">{{ field.label_tag }}</label>
+                        <div class="row">
+                            <p class="offset-2 col-12 validate">{{ field }}</p>
+                        </div>
+                    </div>
+                    {% if field.help_text %}
+                    <div class="container-fluid">
+                        <div class="row text-info pl-2 pr-2"><font size="2">{{ field.help_text }}</font></div>
+                    </div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                      <p class="text-center" style="color: red">{{ error }}</p>
+                     {% endfor %}
+                </div>
+                {% endfor %}
+                <!-- BUTTON -->
+                <div class="container-fluid text-center mt-2 mb-3">
+                    <button type="submit" class="btn btn-primary" >Register</button>
+                </div>
+            </form>
+		</div>
+     	</div>
+    </div>
+	</div>
+</div>
+
+{% endblock %}
+
+

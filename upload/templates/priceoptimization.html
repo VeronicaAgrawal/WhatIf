@@ -1,0 +1,857 @@
+{% extends 'header.html' %}
+{% load mathfilters %}
+
+{% block extra_head_content %}
+		<link rel="stylesheet" href="/static/css/jslider.css" type="text/css">
+		<!-- Pie Chart -->
+	<style>
+		${demo.css}
+	</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+	<section class="content">
+<!-- MIDDLE PART STRATS-->
+ <!-- SEARCH BAR -->
+	<div class="container-fluid">
+
+	<div class="searcheader">Find Your Best Price for the product{{ product_name|pluralize:",s" }} {% for i in product_name %}{% if forloop.counter < 4 %}{{i}}{% if not forloop.last %}, {% endif %}{% elif forloop.counter == 4 %}......({{ product_name|length|add:"-3" }}){% else %}{% endif %}{% endfor %}</div>
+	 <br/>
+	  <div class="row">
+	     <p class="optimizedselectprice">Optimize the price by dragging slider</p>
+   	  </div>
+   	  <br/>
+	<!-- TABLE STRATS -->
+	   <div class="row topsearchrowbound">
+	        <div class="col-sm-12 optimizedscale">
+			       <div class="col-sm-8">
+			          <div class="layout-slider"> <!-- Optimized Scale -->
+					      <input id="SliderSingle" type="slider" name="price" value="{{ products.product_price }}" />
+					  </div> <!-- |. Optimized Scale -->
+			       </div>
+			       <div class="col-sm-4">
+				       <div class="optimizedscalebtn">
+							   <div class="dropdown drp">
+									<button class="btn btn-default btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="optimizebtn">OPTIMIZE<span class="caret"></span></button>
+									<ul class="dropdown-menu">
+									<div> <p>Optimize price by </p><input type="radio" class=priceby  name="priceby" value="Profit">Profit<br><input type="radio" class=priceby name="priceby" value="Revenue">Revenue</div>
+									</ul>
+							   </div>
+							<!--<div class="getvalue">-->
+							<!--</div>-->
+				          <!--<button type="button" class="btn btn-default" id="optimizebtn">OPTIMIZE</button>-->
+						  <form action="{% url 'detailspage' %}" class="detailsclass" method="POST">
+							{% csrf_token %}
+						  <input type="hidden" id="detailsbtn"  name="my_object[]" value="{{productids.0}}">
+				          <button type="submit" class="btn btn-default detailsreq">DETAILS</button>
+						  </form>
+                          <form class="whatifexportform exportclass" method="GET">
+                            <!--{% csrf_token %}-->
+    				      <button type="button" class="btn btn-default popup" onclick="myFunction()">EXPORT <span class="popuptext" id="myPopup">Coming Soon</span></button>
+                          <!--<button type="button" class="btn btn-default" id="whatif_export" name="export" >EXPORT</button>-->
+                          </form>
+                       </div>
+				   </div>
+				   <br/>
+			</div>
+                   <div class="col-sm-12 optimizebg">
+                       <div class="row optimizeinsiderow">
+							<div class="col-sm-8 optimizetablecol">
+								<table id="summary" class="table table-bordered optizedtable">
+										<thead>
+										  <tr>
+											<th></th>
+											<th>PRICE</th>
+											<th>COST</th>
+											<th>VOLUME</th>
+											<th>PROFIT</th>
+											<th>REVENUE</th>
+										  </tr>
+										</thead>
+
+										<tbody>
+										  <tr>
+											<td>Current</td>
+											<td>${{products.product_price | floatformat:2 }}</td>
+											<td>${{products.product_cost | floatformat:2 }}</td>
+											<td>{{products.product_qty | floatformat:"0" }}</td>
+											<td>${{products.current_profit | floatformat:2 }}</td>
+											<!--<td>{{ products.product_price |sub:products.product_cost |mul:products.product_qty | floatformat:"2" }}</td>-->
+											<td>${{products.current_revenue | floatformat:2 }}</td>
+										  </tr>
+
+										  <tr>
+											<td>Optimized</td>
+											<td id = 'opt_price'>$0.00</td>
+											<td id = 'opt_cost'>$0.00</td>
+											<td id = 'opt_volume'>0</td>
+											<td id = 'opt_profit'>$0.00</td>
+											<td id = 'opt_revenue'>$0.00</td>
+										  </tr>
+
+										  <tr>
+											<td>Benefits</td>
+											<td id = 'ben_price' class="benefit">$0.00</td>
+											<td id = 'ben_cost' class="benefit">$0.00</td>
+											<td id = 'ben_volume' class="benefit">0</td>
+											<td id = 'ben_profit' class="benefit_pf">$0.00</td>
+											<td id = 'ben_revenue' class="benefit_rev">$0.00</td>
+										  </tr>
+
+										  <td>% Changes</td>
+										  <td id = 'pc_price' class="benefit">0%</td>
+										  <td id = 'pc_cost' class="benefit">0%</td>
+										  <td id = 'pc_volume' class="benefit">0%</td>
+										  <td id = 'pc_profit' class="benefit_pf1">0%</td>
+										  <td id = 'pc_revenue' class="benefit_rev1">0%</td>
+										  </tr>
+
+										  <!--<tr>-->
+											<!--&lt;!&ndash;<td>Conversion Rate</td>&ndash;&gt;-->
+											<!--<td></td>-->
+											<!--<td></td>-->
+											<!--<td></td>-->
+											<!--<td></td>-->
+											<!--<td></td>-->
+										  <!--</tr>-->
+
+									   </tbody>
+								</table>
+							</div> <!-- | left Table -->
+
+							<div class="col-sm-4 nagative_range">
+								<div class="panel panel-default">
+									<div class="panel-heading">NEGATIVE 0 POSITIVE</div>
+									  <div class="panel-body">
+										 <div class="negativepositiverange">
+											<label for="slider1">PROFIT  </label>
+											 <!--<span class="range-slider__value" id="sl_profit1">0</span>-->
+											<div class="range-slider profit">
+												<p class="optizedrange"><img class="pos_neg" src="https://cdn1.iconfinder.com/data/icons/color-bold-style/21/05-512.png"></p>
+												<input class="range-slider__range" type="range" id="sl_profit" value=""  min = {{products.current_profit|add:"-100"}} max = {{products.current_profit|add:"100"}}>
+												<span class="range-slider__value" id="sl_profit1">0</span>
+												<span class="range-slider__value1"><img class="pos_neg" src ="https://cdn3.iconfinder.com/data/icons/basic-flat-svg/512/svg01-512.png"></span>
+											</div>
+										  </div>
+
+										 <div class="negativepositiverange">
+											<label for="slider1">REVENUE</label>
+											 	<!--<span class="range-slider__value" id = "sl_revenue1">0</span>-->
+												<div class="range-slider revenue">
+													<p class="optizedrange"><img class="pos_neg" src="https://cdn1.iconfinder.com/data/icons/color-bold-style/21/05-512.png"></p>
+													<input class="range-slider__range" type="range" id = "sl_revenue" value="" min = {{products.current_revenue|add:"-100"}} max = {{products.current_revenue|add:"100"}}>
+													<span class="range-slider__value" id = "sl_revenue1">0</span>
+													<span class="range-slider__value1"><img class="pos_neg" src ="https://cdn3.iconfinder.com/data/icons/basic-flat-svg/512/svg01-512.png"></span>
+												</div>
+										 </div>
+
+										 <div class="negativepositiverange">
+											<label for="slider1">VOLUME </label>
+											 	<!--<span class="range-slider__value" id ="sl_volume1">0</span>-->
+												<div class="range-slider volume">
+													<p class="optizedrange"><img class="pos_neg" src="https://cdn1.iconfinder.com/data/icons/color-bold-style/21/05-512.png"></p>
+													<input class="range-slider__range" type="range" id ="sl_volume" value="" min = {{ products.product_qty|add:"-100" }} max = {{ products.product_qty|add:"100" }}>
+													<span class="range-slider__value" id ="sl_volume1">0</span>
+													<span class="range-slider__value1"><img class="pos_neg" src ="https://cdn3.iconfinder.com/data/icons/basic-flat-svg/512/svg01-512.png"></span>
+												</div>
+										 </div>
+										  <p class="note"><img class="currentValueIndicatorImg noteimg" src="https://dezov.s3.amazonaws.com/media/black-triangle-png632-419f-b72a-eacceedb500c.png"><span>current state</span></p>
+									</div> <!-- |.Panel Body-->
+							    </div>
+							</div> <!-- | Right menu -->
+				       </div> <!-- | inner Row -->
+				   </div> <!-- | col-sm-12 -->
+	    </div> <!-- | Main row -->
+	<!-- TABLE ENDS -->
+	<br/>
+	    <div class="row">
+	        <div class="col-sm-6">
+	           <div class="panel panel-default optimizedline">
+					<div class="panel-heading">Current Price Sales Vs Optimal Price Sales</div>
+					<div class="panel-body">
+					   <div id="container1"></div> <!--Line graph-->
+					</div>
+			    </div>
+	        </div>
+
+	        <div class="col-sm-6">
+	           <div class="panel panel-default optizedpie">
+					<div class="panel-footer">Price Trend</div>
+				    <div class="panel-body">
+					  <!-- Optized Pie Chart -->
+					    <div id="container2" class="optimizedpie"></div>
+					</div>
+			    </div>
+	     	</div>
+
+		</div><!-- | row -->
+		<!--<div id="myModal" class="popupoptimize">-->
+		  <!--&lt;!&ndash; Modal content &ndash;&gt;-->
+		  <!--<div class="modal-content optpopup">-->
+			<!--<span class="close">&times;</span>-->
+			<!--<p>Optimize price by..</p>-->
+				<!--<input type="radio" class=optpriceby name="optpriceby" value="Profit"> Profit<br>-->
+				<!--<input type="radio" class=optpriceby name="optpriceby" value="Revenue"> Revenue<br>-->
+		  <!--</div>-->
+		<!--</div>-->
+
+		  <!-- END OF PRODUCT TABLE -->
+	 	 </div>	<!--END OF CONTAINER FLUID--> <!--END OF SEACRH BAR  -->
+	</section>
+	</div>
+	 <!-- end -->
+{% endblock %}
+
+{% block javascript%}
+    <!-- PIE CHART -->
+	<!-- bin/jquery.slider.min.js -->
+	<script type="text/javascript" src="/static/js/jshashtable-2.1_src.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.numberformatter-1.2.3.js"></script>
+	<script type="text/javascript" src="/static/js/tmpl.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.dependClass-0.1.js"></script>
+	<script type="text/javascript" src="/static/js/draggable-0.1.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.slider.js"></script>
+	<script src="/static/js/highcharts.js"></script>
+    <script src="/static/js/main.js"></script>
+
+<script type="text/javascript">
+	var currentProfitValue = {{products.current_profit}};
+	var currentRevenueValue = {{products.current_revenue}};
+	var currentVolumeValue = {{products.product_qty}};
+
+	var OptimizeBy ='Profit'
+	<!--var modal = document.getElementById('myModal');-->
+	<!--var span = document.getElementsByClassName("close")[0];-->
+
+	<!--// When the user clicks the button, open the modal-->
+	<!--$('#optimizebtn').click(function() {-->
+		<!--modal.style.display = "block";-->
+		<!--$('.optpriceby').change(function() {-->
+			<!--OptimizeBy = $(this).val();-->
+			<!--modal.style.display = "none";-->
+		  	<!--optim();-->
+		<!--});-->
+	<!--});-->
+
+
+	$('.priceby').change(function(){
+	   OptimizeBy = $(this).val();
+	   <!--$(".getvalue").html(OptimizeBy)-->
+		$(".drp").removeClass('open');
+		console.log(OptimizeBy)
+		optim();
+	});
+
+
+	$('.dropdown-menu').click(function (e) {
+		e.stopPropagation();
+	});
+
+
+	$("#optimizebtn").click(function(){
+	if ($(".drp").hasClass('open')) {
+		$(".drp").removeClass('open');
+	} else {
+		$(".drp").addClass('open');
+	}
+		console.log('here')
+		$(':radio').each(function () {
+			$(this).removeAttr('checked');
+			$('input[type="radio"]').prop('checked', false);
+		})
+
+	});
+
+
+
+	<!--// When the user clicks anywhere outside of the modal, close it-->
+	<!--window.onclick = function(event) {-->
+	  <!--if (event.target == modal) {-->
+		<!--modal.style.display = "none";-->
+		<!--optim();-->
+	  <!--}-->
+	<!--}-->
+
+	<!--// When the user clicks on <span> (x), close the modal-->
+		<!--span.onclick = function() {-->
+		  <!--modal.style.display = "none";-->
+		  <!--optim();-->
+	<!--}-->
+
+	  function optim(){
+		var peod = -{{ products.product_peod }};
+		var cur_price = {{products.product_price}};
+		var cur_cost = {{products.product_cost}};
+		var cur_volume = {{products.product_qty}};
+		{% if rule_set.MinMargin %}
+		  var min_margin = {{ rule_set.MinMargin }};
+		{% elif products.product_peod|floatformat:2|abs >= 1.5 %}
+		  var min_margin = 20;
+		{% elif products.product_peod|floatformat:2|abs >= 0.8 %}
+		  var min_margin = 30;
+		{% else %}
+		  var min_margin = 35;
+		{% endif %}
+		{% if rule_set.MaxMargin %}
+		  var max_margin = {{ rule_set.MaxMargin }};
+		{% elif products.product_peod|floatformat:2|abs >= 1.25 %}
+		  var max_margin = 45;
+		{% elif products.product_peod|floatformat:2|abs >= 1 %}
+		  var max_margin = 50;
+		{% elif products.product_peod|floatformat:2|abs >= 0.8 %}
+		  var max_margin = 50;
+		{% else %}
+		  var max_margin = 55;
+		{% endif %}
+		console.log({{products.product_peod|floatformat:2|abs}})
+		var min_marginlimit = (100 - min_margin)/100;
+		var max_marginlimit = (100 - max_margin)/100;
+		var minprice = cur_cost/min_marginlimit;
+		var maxprice = cur_cost/max_marginlimit;
+        {% if rule_set.MinVolumeChangeLimits %}
+		  var min_vol_change = {{ rule_set.MinVolumeChangeLimits }};
+		{% elif products.product_peod|floatformat:2|abs >= 1.25 %}
+		  var min_vol_change = 50;
+		{% elif products.product_peod|floatformat:2|abs >= 1 %}
+		  var min_vol_change = 40;
+		{% elif products.product_peod|floatformat:2|abs >= 0.8 %}
+		  var min_vol_change = 30;
+		{% else %}
+		  var min_vol_change = 20;
+		{% endif %}
+		{% if rule_set.MaxVolumeChangeLimits %}
+		  var max_vol_change = {{ rule_set.MaxVolumeChangeLimits }};
+		{% elif products.product_peod|floatformat:2|abs >= 1.25 %}
+		  var max_vol_change = 50;
+		{% elif products.product_peod|floatformat:2|abs >= 1 %}
+		  var max_vol_change = 40;
+		{% elif products.product_peod|floatformat:2|abs >= 0.8 %}
+		  var max_vol_change = 30;
+		{% else %}
+		  var max_vol_change = 20;
+		{% endif %}
+		var min_vol_changelimit = (100 - min_vol_change)/100;
+		var max_vol_changelimit = (100 + max_vol_change)/100;
+		var min_vol_limit = cur_volume * min_vol_changelimit;
+		var max_vol_limit = cur_volume * max_vol_changelimit;
+		var collectionOfProfit = {}
+		var collectionOfRevenue = {}
+		  console.log(minprice, maxprice)
+		  var i;
+		  minpriceFixed = minprice.toFixed(1)
+		  var k = (parseFloat(minpriceFixed) + parseFloat(0.09)).toFixed(2)
+		  console.log(minpriceFixed)
+		  for (i=0; k < maxprice; i++) {
+			 <!--console.log('i = ', i)-->
+			  var x = (peod*((k-cur_price)/(parseFloat(k)+parseFloat(cur_price))));
+			  new_vol = Math.round((cur_volume*(1+x))/(1-x));
+			  if (min_vol_limit < new_vol && new_vol < max_vol_limit) {
+					<!--console.log(min_vol_limit, new_vol, max_vol_limit)-->
+					collectionOfRevenue[k] = new_vol * k
+					collectionOfProfit[k] = (new_vol * k) - (new_vol * cur_cost)
+					<!--console.log((new_vol * k) - (new_vol * cur_cost))-->
+			  }
+			  <!--console.log('k=',k)-->
+			  k = parseFloat(k) + 0.1
+		  }
+		  var Prof_obj = collectionOfProfit;
+		  Prof_max_key ='0'
+		  if (Object.keys(collectionOfProfit).length != 0 ){
+			 Prof_max_key = Object.keys(Prof_obj).reduce(function(a, b){ return Prof_obj[a] > Prof_obj[b] ? a : b });
+		  }
+		  var Rev_obj = collectionOfRevenue;
+		  Rev_max_key ='0'
+		  if (Object.keys(collectionOfRevenue).length != 0){
+			Rev_max_key = Object.keys(Rev_obj).reduce(function(a, b){ return Rev_obj[a] > Rev_obj[b] ? a : b });
+		  }
+		  if ( OptimizeBy == 'Profit' && Prof_max_key != '0' ){
+			max_key = Prof_max_key;
+		  }
+		  else if (OptimizeBy == 'Revenue' && Rev_max_key != '0')  {
+			max_key = Rev_max_key;
+		  }
+		  else if (Object.keys(collectionOfProfit).length == 0 || Object.keys(collectionOfRevenue).length == 0) {
+			max_key = cur_cost/0.5
+		  }
+		  $('#SliderSingle').slider('value',max_key);
+		  slidermouseup();
+		  negtopos();
+		  negtoposvalues();
+		  priceforecast();
+	  }
+
+ function priceforecast(){
+    var peod =  -{{ products.product_peod }};
+    var cur_price = {{products.product_price}};
+    var cur_cost = {{products.product_cost}};
+    var cur_volume = {{products.product_qty}};
+    var cur_profit = {{products.current_profit}};
+    var cur_revenue = {{products.current_revenue}};
+    var opt_price = $('#SliderSingle').val();
+    var cur_list = [{% for k,v in cur_qty.items %}{{ v }}{% if not forloop.last %}, {% endif %}{% endfor %}]
+    var opt_list = [];
+    var length = cur_list.length
+    //alert(length);
+    for (i=0;i<length;i++)
+	{
+		var x = (peod*((opt_price-cur_price)/(parseFloat(opt_price)+parseFloat(cur_price))));
+		quant = Math.round((cur_list[i]*(1+x))/(1-x));
+        opt_list[i] = quant;
+	}
+    chart.series[1].update({showInLegend:true, name:'Optimized Price'}),
+    chart.series[1].setData(opt_list)
+ }
+
+<!--Default slider function-->
+	  var prod_price = {{ products.product_price }};
+      {% if rule_set.MinPriceChangeLimits %}
+      var min_change = {{ rule_set.MinPriceChangeLimits }};
+      {% else %}
+      var min_change = 30;
+      {% endif %}
+      {% if rule_set.MaxPriceChangeLimits %}
+      var max_change = {{ rule_set.MaxPriceChangeLimits }};
+      {% else %}
+      var max_change = 30;
+      {% endif %}
+      var min_changelimit = (100 - min_change)/100;
+      var max_changelimit = (100 + max_change)/100;
+      var slider_minval = prod_price*min_changelimit;
+      var slider_maxval = prod_price*max_changelimit;
+      console.log(slider_minval, slider_maxval);
+	   jQuery("#SliderSingle").slider({
+		from: Math.round(slider_minval),
+		to: Math.round(slider_maxval),
+		 step: 0.01, round: 2, format: { format: '##.##', locale: 'en' }, dimension: '$', skin: "round",
+		 callback: function( value ){
+		  slidermouseup();
+		  negtopos();
+		  negtoposvalues();
+          priceforecast();
+          }
+		});
+
+
+
+	<!--var currentProfitValue = {{products.current_profit}};-->
+	<!--var currentRevenueValue = {{products.current_revenue}};-->
+	<!--var currentVolumeValue = {{products.product_qty}};-->
+      function slidermouseup(){
+        var peod = -{{products.product_peod}};
+    	var cur_price = {{products.product_price}};
+        var cur_cost = {{products.product_cost}};
+        var cur_volume = {{products.product_qty}};
+        var cur_profit = {{products.current_profit}};
+        var cur_revenue = {{products.current_revenue}};
+
+        var opt_price = $('#SliderSingle').val();
+        var opt_cost = parseFloat(cur_cost).toFixed(2);
+        var x = (peod*((opt_price-cur_price)/(parseFloat(opt_price)+parseFloat(cur_price))));
+        var opt_volume = parseFloat((cur_volume*(1+x))/(1-x)).toFixed(0);
+        var opt_profit = (parseFloat(opt_volume * (opt_price - opt_cost))).toFixed(2);
+        var opt_revenue = (parseFloat(opt_price * opt_volume)).toFixed(2);
+
+        var ben_price = (parseFloat(opt_price - cur_price)).toFixed(2);
+        var ben_cost = (parseFloat(opt_cost - cur_cost)).toFixed(2);
+        var ben_volume = (parseFloat(opt_volume - cur_volume)).toFixed(0);
+        var ben_profit = (parseFloat(opt_profit - cur_profit)).toFixed(2);
+        var ben_revenue = (parseFloat(opt_revenue - cur_revenue)).toFixed(2);
+
+        var pc_price = Math.round((ben_price/cur_price) * 100);
+        var pc_cost = Math.round((ben_cost/cur_cost)*100);
+        var pc_volume = Math.round((ben_volume/cur_volume)*100);
+        var pc_profit = Math.round((ben_profit/cur_profit)*100);
+        var pc_revenue = Math.round((ben_revenue/cur_revenue)*100);
+
+
+        $('#opt_price').html("$"+opt_price);
+        $('#opt_cost').html("$"+opt_cost);
+        $('#opt_volume').html(opt_volume);
+        $('#opt_profit').html("$"+opt_profit);
+        $('#opt_revenue').html("$"+opt_revenue);
+
+        $('#ben_price').html("$"+ben_price);
+        $('#ben_cost').html("$"+ben_cost);
+        $('#ben_volume').html(ben_volume);
+        $('#ben_profit').html("$"+ben_profit);
+        $('#ben_revenue').html("$"+ben_revenue);
+
+        $('#pc_price').html(pc_price+"%");
+        $('#pc_cost').html(pc_cost+"%");
+        $('#pc_volume').html(pc_volume+"%");
+        $('#pc_profit').html(pc_profit+"%");
+        $('#pc_revenue').html(pc_revenue+"%");
+
+        $('#sl_profit').prop('value', opt_profit);
+        $('#sl_revenue').prop('value', opt_revenue);
+        $('#sl_volume').prop('value', opt_volume);
+
+        $('#sl_profit').prop('min', cur_profit - 150);
+        $('#sl_profit').prop('max', parseInt(cur_profit) + 150);
+        $('#sl_revenue').prop('min', cur_revenue - 150);
+        $('#sl_revenue').prop('max', parseInt(cur_revenue) + 150);
+        $('#sl_volume').prop('min', cur_volume - 150);
+        $('#sl_volume').prop('max', parseInt(cur_volume) + 150);
+
+        $('#sl_profit1').html(pc_profit+"%");
+        $('#sl_revenue1').html(pc_revenue+"%");
+        $('#sl_volume1').html(pc_volume+"%");
+
+		$('.benefit').each(function() {
+			<!--console.log($(this).html());-->
+			function safeParseFloat(val) {
+			  return parseFloat(isNaN(val) ? val.replace(/[$]/g, '') : val)
+			}
+			if (safeParseFloat($(this).html()) < 0) {
+				$(this).addClass('lowqty');
+			}
+			else {
+			   	$(this).removeClass('lowqty');
+			}
+		});
+		$('.benefit_pf').each(function() {
+			<!--console.log($(this).html());-->
+			function safeParseFloat(val) {
+			  return parseFloat(isNaN(val) ? val.replace(/[$]/g, '') : val)
+			}
+			if (safeParseFloat($(this).html()) < 0) {
+				$(this).addClass('lowqty');
+				$('.benefit_pf1').addClass('lowqty');
+			}
+			else {
+			   	$(this).removeClass('lowqty');
+			   	$('.benefit_pf1').removeClass('lowqty');
+			}
+		});
+		$('.benefit_rev').each(function() {
+			<!--console.log($(this).html());-->
+			function safeParseFloat(val) {
+			  return parseFloat(isNaN(val) ? val.replace(/[$]/g, '') : val)
+			}
+			if (safeParseFloat($(this).html()) < 0) {
+				$(this).addClass('lowqty');
+				$('.benefit_rev1').addClass('lowqty');
+			}
+			else {
+			   	$(this).removeClass('lowqty');
+			   	$('.benefit_rev1').removeClass('lowqty');
+			}
+		});
+      }
+
+      $(document).ready(function(){
+		  $(".sidebar-menu").find(".active").removeClass("active");
+		  $('#whatif').parent().addClass("active");
+      });
+
+	/*----- Line Graph ------*/
+	<!--function (){-->
+	<!--$('#container1').highcharts({-->
+	var labels;
+	var chart = Highcharts.chart('container1',{
+	    chart: {
+	    },
+        title: {
+            text: '',
+
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            title: {
+                text: 'Week No.'
+            },
+            categories: [{% for k,v in cur_qty.items %}'{{ k }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            show: function(cur_qty){if (Object.keys({{cur_qty}}).length > 0) {return true } else { return false}}
+        },
+
+        yAxis: {
+            title: {
+                text: 'Sales'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0,
+            x: 0,
+            y: -160,
+            lineSpacing:20,
+            floating: true
+        },
+
+	    chart: {
+			events: {
+			  load: function() {
+				this.series.forEach(function(s) {
+				  s.update({
+					showInLegend: s.points.length
+				  });
+				});
+			  }
+			}
+	    },
+        series: [{
+			name: 'Current Price',
+			data: [{% for k,v in cur_qty.items %}{{ v }}{% if not forloop.last %}, {% endif %}{% endfor %}]
+		}, {
+		    showInLegend: false,
+			name: '',
+			data: []
+		},]
+
+	}, function(chart) { // on complete
+	  console.log(Object.keys({{cur_qty}}).length)
+		 if (Object.keys({{cur_qty}}).length < 1) {
+			labels = chart.renderer.text('No Data Available', 140, 120).css({
+				color: '#4572A7',
+				fontSize: '16px'
+			  })
+			  .add();
+			  <!--console.log('here->'+{{cur_qty}}.length);-->
+		 }
+		 });
+
+
+
+
+	</script>
+
+
+<script type="text/javascript">
+		 /*-- Optixzed Pie Chart --*/
+	var labels;
+	Highcharts.chart('container2',{
+		chart: {
+			zoomType: 'xy'
+		},
+		title: {
+			text: ''
+		},
+		xAxis: [{
+			title: {
+						text: 'Start Date'
+					},
+			categories: {{categories|safe}},
+			crosshair: true
+		}],
+		yAxis: [{ // Primary yAxis
+			labels: {
+				format: '{value}',
+				style: {
+					color: Highcharts.getOptions().colors[1]
+				}
+			},
+			title: {
+				text: 'Unit Sales',
+				style: {
+					color: Highcharts.getOptions().colors[1]
+				}
+			},
+			opposite: true
+
+		}, { // Secondary yAxis
+			gridLineWidth: 0,
+			title: {
+				text: 'Price',
+				style: {
+					color: Highcharts.getOptions().colors[0]
+				}
+			},
+			labels: {
+				format: '{value}',
+				style: {
+					color: Highcharts.getOptions().colors[0]
+				}
+			}
+
+		}],
+		tooltip: {
+			shared: true
+		},
+		legend: {
+			layout: 'vertical',
+			align: 'left',
+			x: 80,
+			verticalAlign: 'top',
+			y: 55,
+			floating: true,
+			backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255,255,255,0.25)'
+		},
+		series: [{
+			name: 'Price',
+			type: 'column',
+			yAxis: 1,
+			data: [{% for p in price %}{{p}}{% if not forloop.last %}, {% endif %}{% endfor %}]
+		}, {
+			name: 'UnitSales',
+			type: 'spline',
+			data: [{% for s in sales %}{{s}}{% if not forloop.last %}, {% endif %}{% endfor %}]
+		}]
+
+	}, function(chart) { // on complete
+	  console.log({{price|safe}}.length && {{sales}}.length)
+		 if ({{price|safe}}.length == 0 && {{sales}}.length == 0 ) {
+			labels = chart.renderer.text('No Data Available', 140, 120).css({
+				color: '#4572A7',
+				fontSize: '16px'
+			  })
+			  .add();
+			  <!--console.log('here->'+{{cur_qty}}.length);-->
+		 }
+		 });
+
+	function myFunction(){
+  	  var popup = document.getElementById("myPopup");
+      popup.classList.toggle("show");
+	}
+
+	$(document).ready(function(){
+	var name ={{request.session.licence|safe}}
+		if (name.CompetitorFeatured == true){
+		console.log(name.CompetitorFeatured)
+			var name ={{product_name|safe}}
+			console.log({{product_name|safe}})
+			if (name.length > 1){
+				console.log(name.length);
+				$('.detailsreq').hide();
+			}
+			else {
+				$('.detailsreq').show();
+			}
+		}
+		else {
+			$('.detailsreq').hide();
+		}
+	});
+
+		</script>
+<script>
+	function negtopos(){
+		$('.range-slider .currentValue').remove();
+		$('.range-slider').append('<div class="currentValue"></div>');
+		$('.currentValue').append('<span class="currentValueIndicator"><img class="currentValueIndicatorImg" src="https://dezov.s3.amazonaws.com/media/black-triangle-png632-419f-b72a-eacceedb500c.png"></span>');
+		var profitValue = ((currentProfitValue - $('.range-slider.profit .range-slider__range').attr('min'))*100)/($('.range-slider.profit .range-slider__range').attr('max') - $('.range-slider.profit .range-slider__range').attr('min'));
+		var revenueValue = ((currentRevenueValue - $('.range-slider.revenue .range-slider__range').attr('min'))*100)/($('.range-slider.revenue .range-slider__range').attr('max') - $('.range-slider.revenue .range-slider__range').attr('min'));
+		var volumeValue = ((currentVolumeValue - $('.range-slider.volume .range-slider__range').attr('min'))*100)/($('.range-slider.volume .range-slider__range').attr('max') - $('.range-slider.volume .range-slider__range').attr('min'));
+		console.log(profitValue, revenueValue, volumeValue);
+		$('.range-slider.profit .currentValueIndicator').css({'left':profitValue+'%'});
+		$('.range-slider.revenue .currentValueIndicator').css({'left':revenueValue+'%'});
+		$('.range-slider.volume .currentValueIndicator').css({'left':volumeValue+'%'});
+	}
+	$(document).ready(function() {
+		negtopos();
+	});
+</script>
+<script>
+  function negtoposvalues() {
+	 var el_profit, newPoint_profit, newPlace_profit, offset_profit;
+	 var el_revenue, newPoint_revenue, newPlace_revenue, offset_revenue;
+	 var el_volume, newPoint_volume, newPlace_volume, offset_volume;
+
+	   // Cache this for efficiency
+	   el_profit = $('#sl_profit');
+	   el_revenue = $('#sl_revenue');
+	   el_volume = $('#sl_volume');
+
+	   // Measure width of range input
+	   width = el_profit.width();
+
+	   // Figure out placement percentage between left and right of input
+	   newPoint_profit = (el_profit.val() - el_profit.attr("min")) / (el_profit.attr("max") - el_profit.attr("min"));
+	   newPoint_revenue = (el_revenue.val() - el_revenue.attr("min")) / (el_revenue.attr("max") - el_revenue.attr("min"));
+	   newPoint_volume = (el_volume.val() - el_volume.attr("min")) / (el_volume.attr("max") - el_volume.attr("min"));
+
+	   // Janky value to get pointer to line up better
+	   offset_profit = 1;
+	   offset_revenue = 1 ;
+	   offset_volume = 1;
+
+	   // Prevent bubble from going beyond left or right (unsupported browsers)
+	   if (newPoint_profit < 0) { newPlace_profit = 5; }
+	   else if (newPoint_profit > 1) { newPlace_profit = width; }
+	   else { newPlace_profit = width * newPoint_profit + offset_profit; offset_profit -= newPoint_profit; }
+
+       if (newPoint_revenue < 0) { newPlace_revenue = 5; }
+	   else if (newPoint_revenue > 1) { newPlace_revenue = width; }
+	   else { newPlace_revenue = width * newPoint_revenue + offset_revenue; offset_revenue -= newPoint_revenue; }
+
+       if (newPoint_volume < 0) { newPlace_volume = 5; }
+	   else if (newPoint_volume > 1) { newPlace_volume = width; }
+	   else { newPlace_volume = width * newPoint_volume + offset_volume; offset_volume -= newPoint_volume; }
+
+	   // Move bubble
+	   el_profit
+		 .next("span")
+		 .css({
+		   left: newPlace_profit,
+		   marginLeft: offset_profit + "%"
+		 })
+	   el_revenue
+		 .next("span")
+		 .css({
+		   left: newPlace_revenue,
+		   marginLeft: offset_revenue + "%"
+		})
+	   el_volume
+		 .next("span")
+		 .css({
+		   left: newPlace_volume,
+		   marginLeft: offset_volume + "%"
+	   })
+  }
+  $(document).ready(function() {
+		negtoposvalues();
+	});
+
+
+    $('#whatif_export').click(function(){
+        var form = $('#whatif_export').closest("form");
+        $.ajax({
+                <!--type: 'POST',-->
+				url: '/ajax_whatif_export/',
+				data: form.serialize(),
+				<!--dataType: 'json',-->
+				headers: {
+                    'Content-Type': "application/vnd.ms-excel",
+                    'Accept': "application/vnd.ms-excel"
+                },
+				success: function (data,stat,request) {
+
+				    var type = request.getResponseHeader('Content-Type');
+                   var blob = new Blob([data], { type: type ,endings:'native'});
+                   var URL = window.URL || window.webkitURL;
+                   var downloadUrl = URL.createObjectURL(blob);
+                   console.log(downloadUrl)
+                   var a = document.createElement("a");
+                    a.href = jQuery.isPlainObject(data) ? data.file : downloadUrl;
+                    a.download = data.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+				}
+		});
+		});
+
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+

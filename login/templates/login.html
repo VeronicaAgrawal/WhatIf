@@ -1,0 +1,55 @@
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+{% block content %}
+<body>
+		 <div class="container">
+			 {% if messages %}
+                  <ul class="messages">
+                     {% for message in messages %}
+                     <p {% if message.tags %} class="alert alert-{{ message.tags }} mr-5"{% endif %}>{{ message }}</p>
+                     {% endfor %}
+                  </ul>
+			 {% endif %}
+			<div class="logo" >
+			  <img src="/static/images/logo1.png">
+			</div>
+			<br/>
+			 <div class="panel panel-default loginpanel">
+				 <div class="panel-heading">Login into your account <i class="fa fa-lock lockicon" aria-hidden="true">
+				 </i></div>
+				 <form class="loginform" method="post">
+					 {% csrf_token %}
+					 <div class="panel-body">
+						<div class="form-group">
+						  <label for="email"><i class="fa fa-user formicon" aria-hidden="true"></i></label>
+						  <input type="email" class="form-control name" id="email" name="email_id" placeholder="Name" required>
+						</div>
+						<br/>
+						<div class="form-group indexpass" >
+						  <label for="pwd"><i class="fa fa-lock formicon" aria-hidden="true"></i></label>
+						  <input type="password" class="form-control name" id="pwd" name="password" placeholder="Password" required>
+						</div>
+						<br/><br/>
+						<button type="submit" class="btn btn-default signinbtn">Sign In</button>
+						<div class="checkbox">
+						<br/>
+						  <!--<label><input type="checkbox"> Remember me</label>-->
+						  <label> <a href="/forgot_password" >Forgot Password</a></label>
+						</div>
+						<p>New User click here to <a href="/signup" style="color:dodgerblue">Register</a></p>
+					 </div>  <!--END OF PANEL BODY-->
+				 </form>
+			</div>
+		 </div> <!--END OF CONTAINER-->
+</body>
+{% endblock %}
+
+</html>

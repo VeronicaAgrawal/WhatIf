@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot Your Password?{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="col-xs-6 mx-auto outline px-5 pb-3 col-md-6 pt-5 pb-4">
+    <h2 class="pb-5 forgot">Forgot your Password?</h2>
+    <ul class="messages">
+        {% for message in messages %}
+        <p {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+        {% endfor %}
+    </ul>
+    <h6 class="pb-3 verification">Enter your email and we'll send you an OTP for Verification.</h6>
+    <form method="POST">
+        {% csrf_token %}
+        <br/>
+        <h6 >Email address:</h6>
+        <input type="email" name="email_id" placeholder="enter email address" class="input-email mb-3 form-control"><br>
+        <input type="submit" name="" value="Send me OTP!" class="btn text-light ">
+    </form>
+    </div>
+</div>
+{% endblock %}

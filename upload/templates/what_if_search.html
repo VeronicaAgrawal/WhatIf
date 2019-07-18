@@ -1,0 +1,442 @@
+{% extends 'header.html' %}
+
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper heightmin">
+<!-- Main content Start -->
+	<section class="content contentfit">
+
+<!-- MIDDLE PART STRATS-->
+ <!-- SEARCH BAR -->
+ 	<div class="container-fluid">
+
+	<div class="searcheader">SEARCH FOR PRODUCTS</div>
+	<div class="alert alert-danger storereq">Please select a store</div>
+		<!--<p class="alert alert-danger">{{ form.non_field_errors }}</p>-->
+	 <br/>
+	<div class="row search">
+		<form role="form" class="searchform" method="post">
+			{% csrf_token %}
+				<!--<p style="color: red">{{ form.non_field_errors }}</p>-->
+		  <div class="col-sm-2 fashion">
+			  <div class="form-group">
+			   {% csrf_token %}
+				  <select class="form-control" name="sub_department" id="sub_department" placeholder="SUB DEPARTMENT" value="{{ form.sub_department.value }}">
+						<option>SUB DEPARTMENT</option>
+						{% for each in subdept %}
+						  	<option value="{{each.SubDeptName}}">{{each.SubDeptName}}</option>
+						{% endfor %}
+				  </select>
+			  <!--</form>-->
+			  </div>
+		  </div>
+
+		  <div class="col-sm-2 fashion">
+		     <div class="form-group">
+				 <select class="form-control" name="category" id="category" placeholder="CATEGORY" value="{{ form.category.value }}" >
+					<option>CATEGORY</option>
+					{% for each in categoryname %}
+						<option value="{{each.CategoryName}}" >{{each.CategoryName}}</option>
+					{% endfor %}
+				 </select>
+		 	</div>
+		  </div>
+
+		  <div class="col-sm-3 fashion">
+			<input list="" data-list="namelist" type="name"  class="form-control productnamelist inp" name="product_name" placeholder="PRODUCT NAME" value="{{ form.product_name.value|default_if_none:'' }}" autocomplete="off">
+			<datalist id="namelist">
+				{% for each in productname %}
+					<option value="{{each.Name}}">{{each.Name}}</option>
+				{% endfor %}
+			</datalist>
+		  </div>
+
+		  <div class="col-sm-2 fashion">
+			 <input list="" data-list="upclist" type="number" class="form-control upclist inp" name="upc" placeholder="UPC" value="{{ form.upc.value|default_if_none:'' }}" autocomplete="off">
+			 <datalist id="upclist">
+				{% for each in upcnumber %}
+					<option value="{{each.UPC}}">{{each.UPC}}</option>
+				{% endfor %}
+			 </datalist>
+		  </div>
+
+
+		  <div class="col-sm-2 fashion">
+			 <div class="form-group">
+				 <select class="form-control" name="store_id" id="store_id"  placeholder="STORE ID" value="{{ form.store_id.value }}" required>
+					<option value="STORE ID">STORE ID</option>
+					{% for each in store %}
+						<option value="{{each.StoreId}}" >{{each.StoreId}}</option>
+					{% endfor %}
+				 </select>
+			</div>
+		  </div>
+
+
+		  <div class="col-sm-1 fashion">
+			  <button type="button" class="btn btn-default" id="detailsseachbtn">SEARCH </button>
+		  </div>
+		</form>
+	</div> <!--END OF SEARCH-->
+	 <br/>
+
+
+
+	 <form action="{% url 'priceoptimization' %}" method="post">
+		 {% csrf_token %}
+	<!-- TABLE STRATS -->
+	 	<!--<div class="container-fluid">-->
+		<!--</div>-->
+		<div class="row detailsfooterbtn">
+			<div class="checkproduct"></div>
+			<div class="col-sm-12">
+				 <p>
+				<!--<a href="/priceoptimization" ></a>-->
+					 <!--<input type="hidden" id="storeId" name="storeid" value="{{ store_id }}">-->
+				 <button type="button" class="btn-default whatifbtn" onclick="checkedproduct();">
+				   <span><img src="/static/images/what-if-icon.png">
+					</span>WHAT IF</button>
+				    <div class="alert alert-danger productreq">Please select at least one product</div>
+				 </p>
+		   	</div>
+		</div>
+
+	   <div class="row topsearchrowbound topsearchposition">
+	        <div class="col-sm-12  col-xs-12 topsearch">
+			       <div class="col-sm-3 col-xs-6">
+			          <p>TOP SEARCH RESULTS</p>
+			        </div>
+			</div> <!-- /.Col-sm-12 -->
+			<div class="col-xs-12 topsearchtable_scroll">
+
+
+			<div class="col-sm-12 tablecol">
+			    <table class="table table-bordered topsearchtable">
+					    <thead>
+					      <tr >
+					        <th><p><input type="checkbox" id="whatif1" value=""><label for="whatif1"><span></span></label></p>
+					        </th>
+					        <th>ITEM NAME</th>
+					        <th>ITEM UPC</th>
+							<!--<th>STORE ID </th>-->
+							<th>PRICE</th>
+					        <th>SUB-DEPARTMENT</th>
+					        <th>CATEGORY</th>
+
+					      </tr>
+					    </thead>
+
+					    <tbody>
+						{% for prod in productslist %}
+					      <tr>
+					        <td><span>
+					        <input type="checkbox" class=chk id="my_object{{ prod.id }}" value="{{ prod.id }}" name="my_object[]"><label for="my_object{{ prod.id }}"></label></span></td>
+					        <td>{{ prod.Name }}</td>
+					        <td>{{ prod.UPC }}</td>
+							<!--<td>{{ prod.StoreId }}</td>-->
+							<td>{{ prod.ProductPrice }}</td>
+					        <td>{{ prod.SubDeptName }}</td>
+					        <td>{{ prod.CategoryName }}</td>
+					      </tr>
+						{% endfor %}
+					      </tbody>
+
+				</table>
+			</div>
+			</div>
+	    </div> <!-- /. Main row -->
+		<br/>
+
+	 </form>
+	<!-- TABLE ENDS -->
+	  <!-- END OF PRODUCT TABLE -->
+     </div>	<!--END OF CONTAINER FLUID--> <!--END OF SEACRH BAR  -->
+	 </section>
+
+  </div>  <!-- /.content-wrapper -->
+
+{% endblock %}
+
+{% block javascript %}
+    <!-- PIE CHART -->
+	<script src="/static/js/highcharts.js"></script>
+    <script src="/static/js/main.js"></script>
+
+	<script>
+		$('#whatif1').click(function() {
+		   if (this.checked) {
+			   $(':checkbox').each(function() {
+				   this.checked = true;
+			   });
+		   } else {
+			  $(':checkbox').each(function() {
+				   this.checked = false;
+			   });
+			   }
+			});
+
+		function checkedproduct(){
+			var chkArray = [];
+			 $(".chk:checked").each(function() {
+		        chkArray.push($(this).val());
+		        });
+			if (chkArray.length == 0){
+				<!--alert("Please select at least one product");-->
+				$('.productreq').show();
+			}
+			else {
+				$('.productreq').hide();
+        		$('[class*="whatifbtn"]').attr('type', 'submit');
+        	}
+        }
+        $(document).ready(function(){
+		  $(".sidebar-menu").find(".active").removeClass("active");
+		  $('#whatif').parent().addClass("active");
+      	});
+
+      	$(window).on('load',function(){
+      		$('table').DataTable();
+			$('table th:first').removeClass('sorting_asc');
+			$('#DataTables_Table_0_wrapper > div:first').addClass('liftup');
+			$('#DataTables_Table_0_wrapper > div:last').addClass('liftdown');
+      		getCategoryDataBySubDept();
+      		getProductNameDataCategoryName();
+      	});
+
+      	$(document).ready(function(){
+			var storeid= $('#store_id').attr('value');
+			if (storeid=='None') {
+			  var storeid ='{{ store.first.StoreId|default:'STORE ID'}}'
+			}
+			$("#store_id").val(storeid).find("option [value='" + storeid + "']").attr('selected', true);
+		});
+
+
+      	$(document).ready(function(){
+			var categoryname= $('#category').attr('value');
+			if (categoryname=='None') {
+			  var categoryname ='CATEGORY'
+			}
+			$("#category").val(categoryname).find("option [value='" + categoryname + "']").attr('selected', true);
+		});
+
+		$(document).ready(function(){
+			var subdept= $('#sub_department').attr('value');
+			if (subdept=='None') {
+			  var subdept ='SUB DEPARTMENT'
+			}
+			$("#sub_department").val(subdept).find("option [value='" + subdept + "']").attr('selected', true);
+		});
+
+		$("#detailsseachbtn").click(function(){
+			var storeid= $('#store_id').val();
+			if (storeid == 'STORE ID') {
+				<!--alert('Please enter Store Id');-->
+				$('.storereq').show();
+			}
+			else {
+				<!--var form = $('#detailsseachbtn').closest("form");-->
+				$('.storereq').hide();
+				$('[id*="detailsseachbtn"]').attr('type', 'submit');
+			}
+    	});
+
+		$("#sub_department").on('change',function () {
+			$('#category').empty();
+			$('#category').append($('<option>').text('Loading...').attr('value', ''));
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var subname = $('#sub_department').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (subname == 'SUB DEPARTMENT'){
+			subname = '';
+			console.log(subname)
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/categorydisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'SubDeptName': subname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+			}
+		  }).done(function(){
+		  		$('#category').empty();
+			  $('#category').append($('<option>').text('CATEGORY').attr('value', 'CATEGORY'));
+			  $.each(response_data.categoryname, function(i, value) {
+            	  $('#category').append($('<option>').text(value).attr('value', value));
+        	  });
+		  });
+		});
+
+		function getCategoryDataBySubDept(){
+			var old_val = $('#category option:selected').val();
+			$('#category').empty();
+			$('#category').append($('<option>').text('Loading...').attr('value', ''));
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var subname = $('#sub_department').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (subname == 'SUB DEPARTMENT'){
+			subname = '';
+			console.log(subname)
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/categorydisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'SubDeptName': subname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+
+			}
+		  }).done(function(){
+		  		$('#category').empty();
+			  $('#category').append($('<option>').text('CATEGORY').attr('value', 'CATEGORY'));
+			  $.each(response_data.categoryname, function(i, value) {
+			  		if(value == old_val){
+            	  		$('#category').append($('<option>').text(value).attr({'value':value,'selected':'selected'}));
+            	  	}else{
+            	  		$('#category').append($('<option>').text(value).attr('value',value));
+            	  	}
+        	  });
+		});
+		}
+
+		$("#category").on('change',function () {
+			$('#namelist').empty();
+			<!--$('#namelist').append($('<option>').text('Loading...').attr('value', ''));-->
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var catname = $('#category').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (catname == 'CATEGORY'){
+			catname = '';
+			console.log(catname)
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/productnamedisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'CategoryName': catname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+			}
+		  }).done(function(){
+		  		$('#namelist').empty();
+			  $('#namelist').append($('<option>').text('').attr('value', ''));
+			  $.each(response_data.productnamedisplay, function(i, value) {
+            	  $('#namelist').append($('<option>').text(value).attr('value', value));
+        	  });
+		  });
+		});
+
+		function getProductNameDataCategoryName(){
+			var old_val = $('.productnamelist').attr('value');
+			console.log($('.productnamelist').attr('value'));
+			$('#namelist').empty();
+		  var catname = $('#category').attr('value');  // get the selected country ID from the HTML input
+		  console.log(catname);
+		  var response_data = '';
+		  if (catname == 'CATEGORY' || catname == 'None'){
+			catname = '';
+			}
+			console.log($('#category').attr('value'))
+		  $.ajax({                       // initialize an AJAX request
+			url: '/productnamedisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'CategoryName': catname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+
+			}
+		  }).done(function(){
+		  		$('#namelist').empty();
+			  $.each(response_data.productnamedisplay, function(i, value) {
+			  		if(value == old_val){
+            	  		$('#namelist').append($('<option>').text(value).attr({'value':value,'selected':'selected'}));
+            	  	}else{
+            	  		$('#namelist').append($('<option>').text(value).attr('value',value));
+            	  	}
+        	  });
+        	  if (catname != 'CATEGORY' && catname != ''){
+        	     $('.inp').attr('list','namelist');
+        	  }
+		});
+		}
+
+
+		var inpKey = '';
+		var categoryname= $('#category').val();
+		$('#category').change(function(){
+			$('.inp').val('');
+			if($(this).val() !== 'CATEGORY') {
+				datalist = $('.inp').attr('data-list');
+				$('.inp').attr('list', datalist);
+			} else {
+				$('.inp').attr('list', '');
+			}
+		});
+		$('.inp').keyup(function(e){
+		  if (e.keyCode != undefined && $('#category').val() === 'CATEGORY') {
+			if(inpKey != this.value) {
+			  if(this.value.length >= 3){
+				inpKey = this.value;
+				datalist = $(this).attr('data-list');
+				$(this).attr('list', datalist);
+			  } else {
+				$(this).attr('list', '');
+			  }
+			} else {
+			  $(this).attr('list', '');
+			}
+		  }
+		});
+
+		<!--$('.inp').focus(function(){-->
+			<!--if($('#category').val() !== 'CATEGORY' || this.value.length >= 3){-->
+				<!--datalist = $(this).attr('data-list');-->
+				<!--$(this).attr('list', datalist);-->
+			<!--} else {-->
+			<!--$(this).attr('list', '');-->
+			<!--}-->
+		<!--});-->
+		<!--$('.inp').change(function(){-->
+		  <!--inpKey = this.value;-->
+		  <!--$(this).attr('list', '');-->
+		  <!--$(this).blur();-->
+		<!--});-->
+
+
+
+		<!--&lt;!&ndash;$(document).ready(function(){&ndash;&gt;-->
+		 <!--$(".page").click(function(){-->
+			<!--console.log($(this).attr('id'));-->
+			<!--var page = '1'-->
+			<!--if ($(this).attr('id') == 'prevpage') {-->
+				<!--page= $(this).val()-->
+				<!--console.log(page)-->
+			<!--}-->
+			<!--else if ($(this).attr('id') == 'nextpage') {-->
+				<!--page= $(this).val()-->
+				<!--console.log(page)-->
+			<!--}-->
+			<!--else {-->
+				 <!--page = '1';-->
+			<!--}-->
+			<!--var form = $('#detailsseachbtn').closest("form");-->
+			<!--console.log(form.serialize())-->
+			<!--console.log('valid search here');-->
+			<!--$.ajax({-->
+					<!--url: '/whatifsearch/',-->
+					<!--type: "POST",-->
+					<!--data: {'form': "form" },-->
+					<!--dataType: 'json',-->
+					<!--success: function (data) {-->
+						<!--alert("Search Success.");-->
+					<!--}-->
+			<!--});-->
+		<!--});-->
+	</script>
+{% endblock %}
+
+

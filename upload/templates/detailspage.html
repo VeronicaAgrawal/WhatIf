@@ -1,0 +1,228 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+	  <div class="content-wrapper">
+		<!-- Main content Start -->
+		<section class="content">
+
+		<!-- MIDDLE PART STRATS-->
+ <!-- SEARCH BAR -->
+ <div class="container-fluid">
+
+	<div class="searcheader">COMPETITOR PRODUCT DETAILS</div>
+	 <!--<br/>-->
+	<!--<div class="row search">-->
+		<!--<form role="form" class="searchform">-->
+		  <!--<div class="col-sm-3 fashion">-->
+			<!--<input type="name" class="form-control" id="" placeholder="PRODUCT NAME" required>-->
+		  <!--</div>-->
+
+		  <!--<div class="col-sm-2 fashion">-->
+			 <!--<input type="name" class="form-control" id="" placeholder="ITEM NO" required>-->
+		  <!--</div>-->
+
+		   <!--<div class="col-sm-3 fashion">-->
+				 <!--<div class="form-group">-->
+					  <!--<select class="form-control" id="sel1" placeholder="CATEGORY">-->
+						<!--<option>CATEGORY</option>-->
+						<!--<option>1</option>-->
+						<!--<option>2</option>-->
+						<!--<option>3</option>-->
+						<!--<option>4</option>-->
+					  <!--</select>-->
+				<!--</div>-->
+			<!--</div>-->
+
+
+		  <!--<div class="col-sm-3 fashion">-->
+			  <!--<div class="form-group">-->
+					  <!--<select class="form-control" id="sel1"placeholder="SUB CATEGORY">-->
+						<!--<option>SUB CATEGORY</option>-->
+						<!--<option>1</option>-->
+						<!--<option>2</option>-->
+						<!--<option>3</option>-->
+						<!--<option>4</option>-->
+					  <!--</select>-->
+				<!--</div>-->
+		  <!--</div>-->
+
+		  <!--<div class="col-sm-1 fashion">-->
+			  <!--<button type="button" class="btn btn-default" id="detailsseachbtn">SEARCH</button>-->
+		  <!--</div>-->
+		<!--</form>-->
+
+	<!--</div> &lt;!&ndash;END OF SEARCH&ndash;&gt;-->
+	 <br/>
+	  <!-- COMPETITOTS PARA STARTS -->
+		 <!--<div class="row detailscompetitors">-->
+				<!--<div class="col-sm-2 compet">-->
+				   <!--<p> COMPETITOTS</p>-->
+				<!--</div>-->
+
+				<!--<div class="col-sm-2">-->
+				   <!--<p><input type="checkbox" id="test1" value=""><label for="test1"><span>6PM</span></label></p>-->
+
+
+				<!--</div>-->
+
+				<!--<div class="col-sm-2 dillard_detail">-->
+				   <!--<p><input type="checkbox" id="test2" value=""><label for="test2"><span>DILLARDS</span></label></p>-->
+				<!--</div>-->
+
+				<!--<div class="col-sm-2">-->
+				   <!--<p><input type="checkbox" id="test3" value=""><label for="test3"><span>BELK</span></label></p>-->
+
+				<!--</div>-->
+
+				<!--<div class="col-sm-2">-->
+				   <!--<p><input type="checkbox" id="test4" value=""><label for="test4"><span>NORDSTROM</span></label></p>-->
+				<!--</div>-->
+		 <!--</div>-->
+	  <!-- COMPETITOTS PARA END -->
+	  <!--<br/><br/>-->
+
+
+	  <!-- START OF DATA STAGING -->
+			   <div class="row">
+					<div class="col-sm-12 stagingcol">
+						<p>YOUR PRODUCT</p>
+					</div>
+						<div class="col-sm-12 stagingrow">
+							   <div class="row">
+									  <div class="col-sm-2 col-xs-4">
+										<img class="img-responsive" src="/static/images/{{product.Image}}">
+									  </div>
+
+									  <div class="col-sm-3 pname">
+										<p>{{product.Name}}</p>
+									  </div>
+
+									  <div class="col-sm-5 pdescription">
+										 <p>{{product.Description}}</p>
+									  </div>
+
+
+									  <div class="col-sm-2 pprice">
+										 <p></p>
+										 <p>${{product.ProductPrice|floatformat:2 }}</p>
+									  </div>
+							   </div>
+						</div>
+			   </div>
+	  <!-- END OF DATA STAGING -->
+	  <!-- START OF PRODUCT TABLE -->
+			<div class="row producttable_scroll">
+				  <table class="table producttable" id="protable">
+						<thead>
+							 <tr>
+								<th>COMPETITORS</th>
+								<th>PRODUCT NAME</th>
+								<th>DESCRIPTION</th>
+								<!--<th>RATING</th>-->
+								<!--<th>IMAGE</th>-->
+								<th>PRICE</th>
+								<!--<th></th>-->
+							</tr>
+						</thead>
+						<tbody>
+
+						{% for detailsdata in detailstab %}
+							 <tr>
+   							    <td><a href='{{ detailsdata.ProductUrl|default:"javascript:void(0);" }}' target="_blank" class="retailer"><img class="img-responsive" src="/static/images/{{ detailsdata.CompetitorsLogo }}"></a></td>
+								<td class="proname"><p>{{ detailsdata.ProductName }}</p></td>
+								<td class="prodes"><p>{{ detailsdata.Description }}</p></td>
+								<!--<td>-->
+									<!--<div class="stars">-->
+									  <!--<form action="">-->
+										<!--<input class="star star-5" id="star-5" type="radio" name="star"/>-->
+										<!--<label class="star star-5" for="star-5"></label>-->
+										<!--<input class="star star-4" id="star-4" type="radio" name="star"/>-->
+										<!--<label class="star star-4" for="star-4"></label>-->
+										<!--<input class="star star-3" id="star-3" type="radio" name="star"/>-->
+										<!--<label class="star star-3" for="star-3"></label>-->
+										<!--<input class="star star-2" id="star-2" type="radio" name="star"/>-->
+										<!--<label class="star star-2" for="star-2"></label>-->
+										<!--<input class="star star-1" id="star-1" type="radio" name="star"/>-->
+										<!--<label class="star star-1" for="star-1"></label>-->
+									  <!--</form>-->
+									<!--</div>-->
+								<!--</td>-->
+								<!--<td><img src="/static/images/{{ detailsdata.Image }}"></td>-->
+								<td class="proprice"><p>${{ detailsdata.Price|floatformat:2 }}</p></td>
+								<!--<td><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></td>-->
+							 </tr>
+					    {% endfor %}
+						</tbody>
+
+				   </table>
+			</div>
+
+	  <!-- END OF PRODUCT TABLE -->
+  </div>	<!--END OF CONTAINER FLUID--> <!--END OF SEACRH BAR  -->
+	 </section>
+
+			<div class="container-fluid">
+				 <div class="row detailsfooterbtn">
+					   <div class="col-sm-12">
+						 <p>
+							<form action="{% url 'priceoptimization' %}" class="detailsclass" method="POST">
+						   	{% csrf_token %}
+						    <input type="hidden" id="productid"  name="my_object[]" value="{{productid.0}}">
+							 <a><button type="submit" class="btn-default whatifprice"><span>
+							   <img src="/static/images/what-if-icon.png">
+				    			 </span>What if</button></a>
+					   		</form>
+							  <!--<button type="button" class="btn-default">Save to Database</button>-->
+						 </p>
+
+					   </div>
+					</div>
+			</div>
+  </div>  <!-- /.content-wrapper -->
+
+{% endblock %}
+
+{% block javascript %}
+<!-- PIE CHART -->
+	<script src="/static/js/highcharts.js"></script>
+    <script src="/static/js/main.js"></script>
+
+
+	<script type="text/javascript">
+
+	function rowcolor(){
+        var tbl = document.getElementById("protable");
+        if (tbl != null) {
+            for (var i = 1; i < tbl.rows.length; i++) {
+                    if (i % 2 === 0) {
+                    tbl.rows[i].style.backgroundColor = '#cafab6';
+                    }
+                    else {
+                    tbl.rows[i].style.backgroundColor = '#f1f5a8';
+                    }
+            }
+        }}
+
+
+	$(document).ready(function() {
+	 	var compdata = {{ detailstab|safe }};
+		console.log(compdata);
+		if (compdata.length == 0) {
+		var trdetails = ''
+		trdetails += '<tr class="detailerror"> <td valign="top" colspan="6" class="dataempty">No data available in table</td> </tr>';
+		$(".producttable tbody").append(trdetails);
+		}
+		rowcolor();
+	});
+
+	var divs = document.querySelectorAll('.retailer');
+	for (var i = 0; i < divs.length; i++) {
+		if (divs[i].href == "javascript:void(0);") {
+			divs[i].classList.add("disable_a_href");
+		}
+	}
+
+	</script>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="container col-4 outline text-center ">
+        <label class="mb-3 mt-3 pr-4 pl-4">Please fill in the OTP sent to your email to complete registration</label>
+        <p>OTP will expire in 15 mins.</p>
+        {% if messages %}
+          <ul class="messages">
+             {% for message in messages %}
+             <p {% if message.tags %} class="alert alert-{{ message.tags }} mr-5 msgalert"{% endif %}>{{ message }}</p>
+             {% endfor %}
+          </ul>
+        {% endif %}
+        <br>
+        <form id="otp_form" method="post">
+        {% csrf_token %}
+            <div class="col-12 my-1">
+                <div class="input-group ml-2">
+                    <div class="input-group-prepend offset-2">
+                        <div class="input-group-text ">OTP</div>
+                    </div>
+                        <input type="text" class="form-control col-6" name="otp" placeholder="Enter OTP.." required>
+                </div>
+                <br>
+                <!--{% if messages %}-->
+                  <!--<ul class="messages">-->
+                     <!--{% for message in messages %}-->
+                     <!--<p {% if message.tags %} class="alert alert-{{ message.tags }} mr-5"{% endif %}>{{ message }}</p>-->
+                     <!--{% endfor %}-->
+                  <!--</ul>-->
+                <!--{% endif %}-->
+                <button type="submit" class="btn text-center col-4 mt-3 mb-3" data-dismiss="modal">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+
+<!--<p>OTP verification</p>-->
+      <!--&lt;!&ndash;Creates the popup body&ndash;&gt;-->
+    <!--<div class="popup-overlay">-->
+      <!--&lt;!&ndash;Creates the popup content&ndash;&gt;-->
+       <!--<div class="popup-content">-->
+          <!--<h2>Please enter the OTP below to complete registration:</h2>-->
+          <!--<form id="otp_form" method="post">-->
+              <!--{% csrf_token %}-->
+          <!--<input id="otp" name="otp" placeholder="OTP" type="text">-->
+          <!--&lt;!&ndash;popup's close button&ndash;&gt;-->
+          <!--<button type="submit">Submit</button>-->
+          <!--{% if messages %}-->
+          <!--<ul class="messages">-->
+             <!--{% for message in messages %}-->
+             <!--<p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>-->
+             <!--{% endfor %}-->
+          <!--</ul>-->
+          <!--{% endif %}-->
+
+          <!--</form>-->
+       <!--</div>-->
+    <!--</div>-->
+

@@ -1,0 +1,87 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<!-- Profile Section Start -->
+<div class="content-wrapper">
+        <section class="content profilecontent">
+            <div class="row profileborderbound">
+                <div class="col-sm-12">
+                    <div class="row usertageditrow">
+                      <div class="col-sm-2"></div>
+                      <div class="col-sm-8">
+                        <img class="img-responsive" src="/static/images/user-profile1.png">
+                      </div>
+                      <div class="col-sm-2">
+                       <a href="/profile/editaccount"><div class="profile_edit"><img  src="/static/images/edit.png"></div></a>
+                      </div>
+                    </div>
+                     <br/>
+                </div>
+
+                <div class="row">
+                      <div class="col-sm-2 align78_photo">
+                         <div class="profileimgbound">
+                            <img class="profileimg"src="/static/images/profile1.jpg">
+                         </div>
+                      </div>
+
+                        <form class="form-horizontal">
+                            <div class="col-sm-5 align780_right">
+                               <div class="profileoneline">
+                                    <label for="name" class="profilelabel control-label">Contact Person</label>
+                                    <input type="text" class="form-control" id="name" value="{{ acc.ContactPerson }}" disabled>
+                                </div>
+
+                                <div class="profileoneline">
+                                    <label for="number" class="profilelabel control-label">Contact No</label>
+                                    <input type="text" class="form-control" id="number" value="{{ acc.PhoneNumber }}" disabled>
+                                </div>
+
+                                <div class="profileoneline">
+                                    <label for="address" class="profilelabel control-label">Address</label>
+                                    <input type="text" class="form-control" id="address" value="{{ acc.Address }}" disabled>
+                                </div>
+
+                                <div class="profileoneline">
+                                    <label for="country" class="profilelabel control-label">Country</label>
+                                    <input type="text" class="form-control" id="country" value="{{ acc.Country }}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-5 align780_left">
+                                 <div class="profileoneline">
+                                    <label for="company" class="profilelabel control-label">Company</label>
+                                    <input type="text" class="form-control" id="company" value="{{ acc.CompanyName }}" disabled>
+                                </div>
+
+                                <div class="profileoneline">
+                                    <label for="email" class="profilelabel control-label disabled">Email Id</label>
+                                    <input type="email" class="form-control" id="email" value="{{ acc.Email }}" disabled>
+                                </div>
+
+                                <div class="profileoneline">
+                                    <label for="state" class="profilelabel control-label">State</label>
+                                    <input type="text" class="form-control" id="state" value="{{ acc.State }}" disabled>
+                                </div>
+
+                                <div class="profileoneline">
+                                    <label for="zip" class="profilelabel control-label">Zip Code</label>
+                                    <input type="text" class="form-control" id="zip" value="{{ acc.Zip }}" disabled>
+                                </div>
+                            </div> <!--END of col-5-->
+                       </form>
+                  </div> <!--END of Inner Row-->
+               </div> <!--END of Row-->
+            </section>
+      </div>
+
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+    $(document).ready(function(){
+      $(".sidebar-menu").find(".active").removeClass("active");
+      $('#profile').parent().addClass("active");
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+   <section class="content settings">
+      <div class="row">
+           <h3>Your Business Rules</h3>
+          <form method="post">
+              {% csrf_token %}
+           <div class="col-sm-12">
+             <div class="row business_rule_1 clearfix_setting">
+                <div class="col-sm-4 ending_no">
+                  <h2>Volume Change Limits</h2>
+                  <p>Enterprise wide limit on minimum and maximum volume change allowed by percent</p>
+                </div>
+                <div class="col-sm-4">
+                  <div class="comptative_input">
+                      {{ form.min_volume }}
+                      {{ form.max_volume }}
+                    <!--<input type="text" class="form-control" name="digit" value="5%">-->
+                    <!--<input type="text" class="form-control" name="digit" value="40%">-->
+                  </div>
+                </div>
+                <div class="col-sm-4 allowed_no">
+                  <h2>Minimum Volume Change</h2>
+                  <h2>Maximum Volume Change</h2>
+                  <!--<h2>Ending Numbers</h2>-->
+                  <!--<p>Enterprise wide ending number rules</p>-->
+                <!--</div>-->
+                <!--<div class="col-sm-4 ending_input">-->
+                  <!--{{ form.ending_number }}-->
+                  <!--&lt;!&ndash;<input type="text" class="form-control" name="digit" value=".99, .88, 77">&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div class="col-sm-4 allowed_no">-->
+                  <!--<h2>Allowed Digits</h2>-->
+                </div>
+             </div>
+
+             <div class="row business_rule_2 clearfix_setting">
+               <div class="col-sm-4 ending_no">
+                  <h2>Competitive Price Index</h2>
+                  <p>Enterprise wide CPI index, maximum or minimum</p>
+                </div>
+                <div class="col-sm-4">
+                  <div class="comptative_input">
+                      {{ form.min_comp_price }}
+                      {{ form.max_comp_price }}
+                    <!--<input type="text" class="form-control" name="digit" value="95%">-->
+                    <!--<input type="text" class="form-control" name="digit" value="105%">-->
+                  </div>
+                </div>
+                <div class="col-sm-4 allowed_no">
+                  <h2>Min Competitive Price Point</h2>
+                  <h2>Max Competitive Price Point</h2>
+                </div>
+             </div>
+
+             <div class="row business_rule_3 clearfix_setting">
+               <div class="col-sm-4 ending_no">
+                  <h2>Price Change Limits</h2>
+                  <p>Enterprise wide limit on minimum and maximum price change allowed by percent</p>
+                </div>
+                <div class="col-sm-4">
+                  <div class="comptative_input">
+                      {{ form.min_price }}
+                      {{ form.max_price }}
+                    <!--<input type="text" class="form-control" name="digit" value="5%">-->
+                    <!--<input type="text" class="form-control" name="digit" value="40%">-->
+                  </div>
+                </div>
+                <div class="col-sm-4 allowed_no">
+                  <h2>Minimum Price Change</h2>
+                  <h2>Maximum Price Change</h2>
+                </div>
+             </div>
+
+             <div class="row business_rule_4 clearfix_setting">
+               <div class="col-sm-4 ending_no">
+                  <h2>Margin</h2>
+                  <p>Enterprise wide limit on minimum and maximum by percent</p>
+                </div>
+                <div class="col-sm-4">
+                  <div class="comptative_input">
+                      {{ form.min_margin }}
+                      {{ form.max_margin }}
+                    <!--<input type="text" class="form-control" name="digit" value="5%">-->
+                    <!--<input type="text" class="form-control" name="digit" value="50%">-->
+                  </div>
+                </div>
+                <div class="col-sm-4 allowed_no">
+                  <h2>Minimum Margin</h2>
+                  <h2>Maximum Margin</h2>
+                </div>
+             </div>
+
+              <div class="row business_rule_5 clearfix_setting">
+               <div class="col-sm-4 ending_no">
+                  <h2>Custom Added Business Rules Title</h2>
+                  <p>Details on the rule added here......</p>
+                </div>
+                <div class="col-sm-4">
+                  <div class="custom_input">
+                    <input type="text" class="form-control" name="digit" value="99%">
+                    <input type="text" class="form-control" name="digit" value="Category > Sub-Category">
+                  </div>
+                </div>
+                <div class="col-sm-4 allowed_no">
+                  <h2>Allowed Digits</h2>
+                  <h2>Demand Group</h2>
+                </div>
+              </div>
+              <div class="row text-center mr-bottom-">
+                  <button type="submit" id= "Save" class="btn btn-default editaccountbtn margdown">Save Changes</button>
+              </div>
+           </div>
+          </form>
+         </div>
+   </section>
+ </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+    $(document).ready(function(){
+          $(".sidebar-menu").find(".active").removeClass("active");
+          $('#setting').parent().addClass("active");
+        });
+    </script>
+{% endblock %}

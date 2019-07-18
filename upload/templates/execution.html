@@ -1,0 +1,618 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper heightmin">
+<!-- Main content Start -->
+	<section class="content contentfit">
+
+<!-- MIDDLE PART STRATS-->
+ <!-- SEARCH BAR -->
+ 	<div class="container-fluid">
+
+	<div class="searcheader">SEARCH FOR PRODUCTS</div>
+	<div class="alert alert-danger storereq">Please select at least a Category,ProductName or UPC</div>
+	 <br/>
+	<div class="row search">
+		<form role="form" class="searchform" method="post">
+			{% csrf_token %}
+		  <div class="col-sm-3 fashion">
+			  <div class="form-group">
+			   {% csrf_token %}
+				  <select class="form-control" name="sub_department" id="sub_department" placeholder="SUB DEPARTMENT" value="{{ form.sub_department.value }}">
+						<option>SUB DEPARTMENT</option>
+						{% for each in subdeptexe %}
+						  	<option value="{{each.SubDeptName}}">{{each.SubDeptName}}</option>
+						{% endfor %}
+				  </select>
+			  </div>
+		  </div>
+
+		  <div class="col-sm-3 fashion">
+		     <div class="form-group">
+				 <select class="form-control" name="category" id="category" placeholder="CATEGORY" value="{{ form.category.value }}" >
+					<option>CATEGORY</option>
+					{% for each in categoryexe %}
+						<option value="{{each.CategoryName}}" >{{each.CategoryName}}</option>
+					{% endfor %}
+				 </select>
+		 	</div>
+		  </div>
+
+		  <div class="col-sm-3 fashion">
+			<input list="" data-list="namelist" type="name"  class="form-control productnamelist inp" name="product_name" id="nameexe" placeholder="PRODUCT NAME" value="{{ form.product_name.value|default_if_none:'' }}" autocomplete="off">
+			<datalist id="namelist">
+				{% for each in productnameexe %}
+					<option value="{{each.Name}}">{{each.Name}}</option>
+				{% endfor %}
+			</datalist>
+		  </div>
+
+		  <div class="col-sm-2 fashion">
+			 <input list="" data-list="upclist" type="number" class="form-control upclist inp" name="upc" id="upcexe" placeholder="UPC" value="{{ form.upc.value|default_if_none:'' }}" autocomplete="off">
+			 <datalist id="upclist">
+				{% for each in upcexe %}
+					<option value="{{each.UPC}}">{{each.UPC}}</option>
+				{% endfor %}
+			 </datalist>
+		  </div>
+
+		  <div class="col-sm-1 fashion">
+			  <button type="button" class="btn btn-default" id="detailsseachbtn">SEARCH </button>
+		  </div>
+		</form>
+	</div> <!--END OF SEARCH-->
+
+    <div class="row promobox">
+
+        <div class="selectpro"></div>
+
+        <div class="col-sm-12">
+           <div class="panel panel-default optimizedline">
+                <div class="panel-heading">Execution by Display</div>
+                <div class="panel-body">
+                   <div id="container1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+           <div class="panel panel-default optizedpie">
+                <div class="panel-footer">Execution by Region</div>
+                <div class="panel-body">
+                    <div id="container2" class="optimizedpie"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+           <div class="panel panel-default optizedpie">
+                <div class="panel-footer">Sales Lift by Location</div>
+                <div class="panel-body">
+                    <div id="container3" class="optimizedpie"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+           <div class="panel panel-default optizedpie">
+                <div class="panel-footer">Sales Lift by Type</div>
+                <div class="panel-body">
+                    <div id="container4" class="optimizedpie"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>	<!--END OF CONTAINER FLUID-->
+
+	<!-- TABLE ENDS -->
+	  <!-- END OF PRODUCT TABLE -->
+     </div>	<!--END OF CONTAINER FLUID--> <!--END OF SEACRH BAR  -->
+	 </section>
+
+  </div>  <!-- /.content-wrapper -->
+{% endblock %}
+
+{% block javascript %}
+
+    <script src="/static/js/main.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+<script type="text/javascript">
+
+		var inpKey = '';
+		var categoryname= $('#category').val();
+		$('#category').change(function(){
+			$('.inp').val('');
+			if($(this).val() !== 'CATEGORY') {
+				datalist = $('.inp').attr('data-list');
+				$('.inp').attr('list', datalist);
+			} else {
+				$('.inp').attr('list', '');
+			}
+		});
+		$('.inp').keyup(function(e){
+		  if (e.keyCode != undefined && $('#category').val() === 'CATEGORY') {
+			if(inpKey != this.value) {
+			  if(this.value.length >= 3){
+				inpKey = this.value;
+				datalist = $(this).attr('data-list');
+				$(this).attr('list', datalist);
+			  } else {
+				$(this).attr('list', '');
+			  }
+			} else {
+			  $(this).attr('list', '');
+			}
+		  }
+		});
+
+
+        $(window).on('load',function(){
+            getCategoryDataBySubDept();
+            getProductNameDataCategoryName();
+        });
+
+		$("#sub_department").on('change',function () {
+			$('#category').empty();
+			$('#category').append($('<option>').text('Loading...').attr('value', ''));
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var subname = $('#sub_department').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (subname == 'SUB DEPARTMENT'){
+			subname = '';
+			console.log(subname)
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/categorydisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'SubDeptName': subname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+			}
+		  }).done(function(){
+		  		$('#category').empty();
+			  $('#category').append($('<option>').text('CATEGORY').attr('value', 'CATEGORY'));
+			  $.each(response_data.categoryname, function(i, value) {
+            	  $('#category').append($('<option>').text(value).attr('value', value));
+        	  });
+		  });
+		});
+
+		function getCategoryDataBySubDept(){
+			var old_val = $('#category option:selected').val();
+			$('#category').empty();
+			$('#category').append($('<option>').text('Loading...').attr('value', ''));
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var subname = $('#sub_department').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (subname == 'SUB DEPARTMENT'){
+			subname = '';
+			console.log(subname)
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/categorydisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'SubDeptName': subname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+
+			}
+		  }).done(function(){
+		  		$('#category').empty();
+			  $('#category').append($('<option>').text('CATEGORY').attr('value', 'CATEGORY'));
+			  $.each(response_data.categoryname, function(i, value) {
+			  		if(value == old_val){
+            	  		$('#category').append($('<option>').text(value).attr({'value':value,'selected':'selected'}));
+            	  	}else{
+            	  		$('#category').append($('<option>').text(value).attr('value',value));
+            	  	}
+        	  });
+		});
+		}
+
+		$("#category").on('change',function () {
+			$('#namelist').empty();
+			<!--$('#namelist').append($('<option>').text('Loading...').attr('value', ''));-->
+		  <!--var url = $("#subform").attr("category-url");  // get the url of the `load_cities` view-->
+		  var catname = $('#category').val();  // get the selected country ID from the HTML input
+		  var response_data = '';
+		  if (catname == 'CATEGORY'){
+			catname = '';
+			console.log(catname)
+			}
+		  $.ajax({                       // initialize an AJAX request
+			url: '/productnamedisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'CategoryName': catname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+			}
+		  }).done(function(){
+		  		$('#namelist').empty();
+			  $('#namelist').append($('<option>').text('').attr('value', ''));
+			  $.each(response_data.productnamedisplay, function(i, value) {
+            	  $('#namelist').append($('<option>').text(value).attr('value', value));
+        	  });
+		  });
+		});
+
+		function getProductNameDataCategoryName(){
+			var old_val = $('.productnamelist').attr('value');
+			console.log($('.productnamelist').attr('value'));
+			$('#namelist').empty();
+		  var catname = $('#category').attr('value');  // get the selected country ID from the HTML input
+		  console.log(catname);
+		  var response_data = '';
+		  if (catname == 'CATEGORY' || catname == 'None'){
+			catname = '';
+			}
+			console.log($('#category').attr('value'))
+		  $.ajax({                       // initialize an AJAX request
+			url: '/productnamedisplay/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+			  'CategoryName': catname       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+			  response_data = data;
+
+			}
+		  }).done(function(){
+		  		$('#namelist').empty();
+			  $.each(response_data.productnamedisplay, function(i, value) {
+			  		if(value == old_val){
+            	  		$('#namelist').append($('<option>').text(value).attr({'value':value,'selected':'selected'}));
+            	  	}else{
+            	  		$('#namelist').append($('<option>').text(value).attr('value',value));
+            	  	}
+        	  });
+        	  if (catname != 'CATEGORY' && catname != ''){
+        	     $('.inp').attr('list','namelist');
+        	  }
+		});
+		}
+
+
+      	$(document).ready(function(){
+			var categoryname= $('#category').attr('value');
+			if (categoryname=='None') {
+			  var categoryname ='CATEGORY'
+			}
+			$("#category").val(categoryname).find("option [value='" + categoryname + "']").attr('selected', true);
+		});
+
+		$(document).ready(function(){
+			var subdept= $('#sub_department').attr('value');
+			if (subdept=='None') {
+			  var subdept ='SUB DEPARTMENT'
+			}
+			$("#sub_department").val(subdept).find("option [value='" + subdept + "']").attr('selected', true);
+		});
+
+
+		$("#detailsseachbtn").click(function(){
+            var namereq= $('#nameexe').val();
+            var upcreq= $('#upcexe').val();
+            var catreq= $('#category').val();
+			if (namereq.length == 0 && upcreq.length == 0 && catreq == 'CATEGORY') {
+                <!--$(".storereq").html("Please select at least a Category,ProductName or UPC");-->
+                $('.storereq').show();
+			}
+            else {
+                $('.storereq').hide();
+				$('[id*="detailsseachbtn"]').attr('type', 'submit');
+			}
+    	});
+
+    var display_chart = Highcharts.chart('container1', {
+        chart: {
+            inverted: false,
+            type: 'column'
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            categories: {{display_cat_names|safe}},
+			min: 0,
+            labels: {
+                style: {
+                    width: '150px',
+                    'min-width': '100px'
+                },
+            }
+        },
+
+        yAxis: [{
+            min: 0,
+            title: {
+                text: 'Execution Percent'
+            }
+        }, {
+            title: {
+                text: ''
+            },
+            opposite: true
+        }],
+        legend: {
+            shadow: false
+        },
+        credits:{
+            enabled: false
+        },
+        tooltip: {
+            shared: true,
+            pointFormat: '{series.name}:<b>{point.y}%</b><br />'
+        },
+        plotOptions: {
+            column: {
+                grouping: true,
+                shadow: false,
+                borderWidth: 0
+            },
+            series: {
+           			borderWidth: 0,
+           			dataLabels: {
+               			enabled: true,
+               			format: '{point.y}'
+           			}
+       		}
+        },
+        series: [{
+            name: 'Display Present',
+            color: 'rgba(165,170,217,1)',
+            data: [{% for d in display_present %}{{d}}{% if not forloop.last %},{% endif %}{% endfor %}]
+        }, {
+            name: 'Authorized Display Percent',
+            color: 'rgba(126,86,134,.9)',
+            data: [{% for d in authdisplay %}{{d}}{% if not forloop.last %},{% endif %}{% endfor %}]
+          }]
+    }, function(chart) { // on complete
+     	if ({{display_cat_names|safe}}.length == 1) {
+			chart.update({
+				chart: {
+					inverted: true
+				},
+			});
+     	}
+     	if ({{display_cat_names|safe}}.length > 5) {
+     		chart.update({
+     			xAxis: {
+					max: 4,
+					scrollbar: {
+						enabled: true
+					},
+				},
+			});
+		}
+        if (Object.keys({{display_cat_names|safe}}).length < 1) {
+            labels = chart.renderer.text('No Data Available', 400, 200).css({
+                color: '#4572A7',
+                fontSize: '16px'
+              })
+              .add();
+			  chart.series[1].remove(true);
+			  chart.series[0].remove(true);
+       }
+    });
+
+
+    var region_chart = Highcharts.chart('container2', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    type: 'category',
+                    min: 0
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'Display Present'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y}%'
+                        }
+                    }
+                },
+                credits:{
+                    enabled: false
+                },
+                tooltip: {
+                    headerFormat: '{point.key}  ',
+                    pointFormat: '{point.region} <br />Display Present: <b>{point.y}%</b> <br/>Store: <b>{point.store}</b>'
+                },
+                series: [
+                    {
+                        name: "Division",
+                        colorByPoint: true,
+                        data:[{% for k,v in division.items %} { name:'{{k}}', y:{{v.Display_avg}}, store:{{v.Store_sum}} {% if '{{v.Region_name}}' != "" %}, region:'{{v.Region_name}}' {% endif %} {% if v.Region_count != 1 %}, drilldown:'{{k}}' {% endif %}} {% if not forloop.last %}, {% endif %} {% endfor %}],
+
+                    }
+                ],
+                drilldown: {
+                    series: [{% for k,v in division_drilldown.items %} { name:'{{k}}', id:'{{k}}', data: [{% for j in v %} { name:'{{j.region}}', y:{{j.display}}, store:{{j.store}} } {% if not forloop.last %}, {% endif %} {% endfor %}]} {% if not forloop.last %}, {% endif %} {% endfor %}],
+                }
+
+            }, function(chart) { // on complete
+            	if (({{division.keys|length}}) > 10) {
+            		chart.update({
+            			xAxis: {
+            				max: 9,
+            				scrollbar: {
+            					enabled: true
+            				},
+            			},
+            		});
+            	}
+				if (Object.keys({{division.keys|length}}) < 1) {
+					labels = chart.renderer.text('No Data Available', 400, 200).css({
+						color: '#4572A7',
+						fontSize: '16px'
+					  })
+					  .add();
+			    }
+            });
+
+
+    var location_chart = Highcharts.chart('container3', {
+                chart: {
+                    type: 'bubble',
+                    plotBorderWidth: 1,
+                    zoomType: 'xy'
+                },
+
+                legend: {
+                    enabled: false
+                },
+                credits:{
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+
+                xAxis: {
+                    gridLineWidth: 1,
+                    title: {
+                        text: 'Sales Lift'
+                    },
+                    labels: {
+                        format: '{value} %'
+                    }
+                },
+
+                yAxis: {
+                    startOnTick: false,
+                    endOnTick: false,
+                    title: {
+                        text: '% on Display'
+                    },
+                    labels: {
+                        format: '{value} %'
+                    }
+                },
+                tooltip: {
+                    useHTML: true,
+                    headerFormat: '<table>',
+                    pointFormat: '<tr><th colspan ="3" style="font-size:12px"><h5 style="white-space: nowrap;"> {point.name}</h5></th></tr>' +
+						'<tr><th style="font-size:12px;white-space: nowrap;">Sales Lift :</th><td style="font-size:12px">{point.x}%</td></tr>' +
+						'<tr><th style="font-size:12px;white-space: nowrap;">Display Present :</th><td style="font-size:12px">{point.y}%</td></tr>' +
+						'<tr><th style="font-size:12px;white-space: nowrap;">Sales :</th><td style="font-size:12px">${point.z} </td></tr>',
+					footerFormat: '</table>',
+                    followPointer: true
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    data: [{% for k,v in saleslift_location.items %} { name:'{{k}}', y:{{v.Displaypercent}}, x:{{v.Saleslift}}, z:{{v.Sales}} } {% if not forloop.last %}, {% endif %} {% endfor %}],
+
+                }]
+            }, function(chart) { // on complete
+				if (Object.keys({{saleslift_location|length}}) < 1) {
+					labels = chart.renderer.text('No Data Available', 200, 200).css({
+						color: '#4572A7',
+						fontSize: '16px'
+					  })
+					  .add();
+			    }
+            });
+
+    var type_chart = Highcharts.chart('container4', {
+                chart: {
+                    type: 'bubble',
+                    plotBorderWidth: 1,
+                    zoomType: 'xy'
+                },
+
+                legend: {
+                    enabled: false
+                },
+
+                title: {
+                    text: ''
+                },
+                credits:{
+                    enabled: false
+                },
+                xAxis: {
+                    gridLineWidth: 1,
+                    title: {
+                        text: 'Sales Lift'
+                    },
+                    labels: {
+                        format: '{value} %'
+                    }
+                },
+
+                yAxis: {
+                    startOnTick: false,
+                    endOnTick: false,
+                    title: {
+                        text: '%off Display'
+                    },
+                    labels: {
+                        format: '{value} %'
+                    }
+                },
+
+                tooltip: {
+                    useHTML: true,
+                    headerFormat: '<table>',
+                    pointFormat: '<tr><th colspan ="3" style="font-size:12px"><h5 style="white-space: nowrap;">{point.name}</h5></th></tr>' +
+						'<tr><th style="font-size:12px;white-space: nowrap;">Sales Lift :</th><td style="font-size:12px">{point.x}%</td></tr>' +
+						'<tr><th style="font-size:12px;white-space: nowrap;">Display Present :</th><td style="font-size:12px">{point.y}%</td></tr>' +
+						'<tr><th style="font-size:12px;white-space: nowrap;">Sales :</th><td style="font-size:12px">${point.z} </td></tr>',
+					footerFormat: '</table>',
+                    followPointer: true
+                },
+
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+
+                series: [{
+                    data: [{% for k,v in saleslift_type.items %} { name:'{{k}}', y:{{v.Displaypercent}}, x:{{v.Saleslift}}, z:{{v.Sales}} } {% if not forloop.last %}, {% endif %} {% endfor %}],
+                }]
+
+            }, function(chart) { // on complete
+				if (Object.keys({{saleslift_type|length}}) < 1) {
+					labels = chart.renderer.text('No Data Available', 200, 200).css({
+						color: '#4572A7',
+						fontSize: '16px'
+					  })
+					  .add();
+			    }
+            });
+
+
+	</script>
+
+{% endblock %}

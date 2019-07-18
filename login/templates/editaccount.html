@@ -1,0 +1,202 @@
+{% extends 'header.html' %}
+
+{% block javascript %}
+<script type="text/javascript">
+function checkPasswordMatch() {
+    var password = $("#txtNewPassword").val();
+    var confirmPassword = $("#txtConfirmPassword").val();
+
+    if (password != confirmPassword)
+        $("#divCheckPasswordMatch").html("Passwords do not match!");
+    else
+        $('#Save').attr('type', 'submit');
+        <!--$("#divCheckPasswordMatch").html("");-->
+}
+$(document).ready(function(){
+      $(".sidebar-menu").find(".active").removeClass("active");
+      $('#profile').parent().addClass("active");
+    });
+
+    $('.infoCircle').click(function(){
+        $('.editpasshelp').toggle();
+    });
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+          <section class="content row editaccountcontent">
+          <br/>
+              <div class="row">
+                <div class="col-sm-12">
+                    <div class="registrationFormAlert" id="divCheckPasswordMatch"></div>
+                    <a href="/profile"><p class="editprofilegoback"> Go Back</p></a>
+                </div>
+              </div>
+              <div class="panel panel-default editaccountpanel">
+                  <div class="panel-heading">Edit Account</div>
+
+                  <div class="panel-body row">
+
+                      <div class="col-sm-12">
+                         <div class="row">
+                            <div class="col-sm-2 ">
+                              <p class="editposition"> Profile Image</p>
+                            </div>
+
+                            <div class="col-sm-2 editprofilebound">
+                               <img src="/static/images/profile1.jpg" class="editproimg">
+                            </div>
+
+                            <div class="col-sm-6 ">
+                              <div class="editpositioninput">  <input type="file" class="form-control" id="prophoto"></div>
+                            </div>
+                         </div>
+                           <br/>
+                      </div> <!--End of col-sm-12-->
+
+                      <div class="col-sm-12">
+                          <form class="form-horizontal editprofileform" method="post">
+                              {% csrf_token %}
+                              <div class="col-sm-12">
+                                 <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                          <label class="col-sm-4 control-label">Contact Person</label>
+                                          <div class="col-sm-8">
+                                              {{ form.contact_person }}
+                                            <!--<input class="form-control" id="" name="name"  type="text" placeholder="Contact Person">-->
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">State</label>
+                                            <div class="col-sm-8">
+                                             {{ form.state }}
+                                              <!--<input class="form-control" id="" name="state" type="text" placeholder="Enter State">-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                </div> <!--/.Row-->
+
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                          <label class="col-sm-4 control-label">Email Id</label>
+                                          <div class="col-sm-8">
+                                              {{ form.email_id }}
+                                            <!--<input class="form-control" id="" name="email" type="email" placeholder="Enter email">-->
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Country</label>
+                                            <div class="col-sm-8">
+                                                {{ form.country }}
+                                              <!--<input class="form-control" id="" name="country" type="text" placeholder="Country">-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div class="col-sm-2"></div>
+                                </div> <!--/.Row-->
+
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                          <label class="col-sm-4 control-label">Company</label>
+                                          <div class="col-sm-8">
+                                            {{ form.company_name }}
+                                              <!--<input class="form-control" id="" name="company" type="text" placeholder="Enter Company">-->
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Zip Code</label>
+                                            <div class="col-sm-8">
+                                              {{ form.zip_code }}
+                                                <!--<input class="form-control" id="" name="zipcode" type="text" placeholder="Enter Zip Code">-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                </div> <!--/.Row-->
+
+
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Contact No.</label>
+                                            <div class="col-sm-8">
+                                              {{ form.phone_number }}
+                                                <!--<input class="form-control" id="" name="phone" type="no" placeholder="Contact No.">-->
+                                            </div>
+                                            <div class="" style="color:red">{{ form.phone_number.errors }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                          <label class="col-sm-4 control-label">Change Password</label>
+                                          <div class="col-sm-8">
+                                              {{ form.password }}
+                                              <i class='fas fa-info-circle infoCircle'></i>
+                                            <!--<input class="form-control" id="" name="password" type="password" placeholder="Enter New password">-->
+                                          </div>
+                                            <div class="" style="color:red">{{ form.password.errors }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 editpasshelp">{{ form.password.help_text }}</div>
+                                </div> <!--/.Row-->
+
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label  class="col-sm-4 control-label">Address</label>
+                                            <div class="col-sm-8">
+                                                {{ form.address }}
+                                              <!--<input class="form-control" id="" name="address" type="text" placeholder="Address">-->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                          <label class="col-sm-4 control-label">Confirm Password</label>
+                                          <div class="col-sm-8">
+                                            {{ form.confirm_password }}
+                                              <!--<input class="form-control" id="" name="confirm_password" type="password" placeholder="Re-enter password">-->
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                </div> <!--/.Row-->
+
+
+
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                          <label class="col-sm-4 control-label">&nbsp;</label>
+                                          <div class="col-sm-8">
+                                            <button type="button" id= "Save" class="btn btn-default editaccountbtn" onclick="checkPasswordMatch();">Save Changes</button>
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div> <!--/.Row-->
+                            </div> <!--End of col-sm012-->
+                          </form>
+                      </div> <!--END OF NAME PART col-sm-12-->
+                  </div> <!--End of Panel Body-->
+              </div>
+          </section>
+      </div> <!-- |. Content Wrapper-->
+{% endblock %}
+
